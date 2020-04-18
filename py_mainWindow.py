@@ -6,6 +6,8 @@ from py_web import WebEngineView
 from py_surpac import SurpacProcess
 
 
+# 装配主窗口
+
 class MainWindow(QMainWindow):
     def __init__(self, config, logger):
         super(MainWindow, self).__init__()
@@ -23,7 +25,6 @@ class MainWindow(QMainWindow):
 
         # Surpac
         surpac_process = SurpacProcess(config=config, logger=logger)
-
 
         # 指定tab不显示关闭按钮
         tabWidget.tabBar().setTabButton(0, QTabBar.RightSide, None)
