@@ -12,6 +12,7 @@ class WebEngineView(QWebEngineView):
         self.logger = logger
         self.tabWidget = tabWidget
         self.settings().setAttribute(QWebEngineSettings.PluginsEnabled, True)  # 支持视频播放
+        self.settings().setAttribute(QWebEngineSettings.SpatialNavigationEnabled, True)  # 支持视频播放
         self.page().windowCloseRequested.connect(self.on_windowCloseRequested)  # 页面关闭请求
         self.page().profile().downloadRequested.connect(self.on_downloadRequested)  # 页面下载请求
 

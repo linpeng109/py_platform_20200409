@@ -19,7 +19,8 @@ class SurpacProcess:
     # 启动执行文件返回进程pid
     # @staticmethod
     def startProcess(self, cmd):
-        pid = subprocess.Popen(cmd).pid
+        pid = subprocess.Popen(cmd, stdout=subprocess.PIPE,
+                               stdin=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True).pid
         return pid
 
     # 从指定pid获取窗口句柄（通过回调函数）
@@ -39,7 +40,7 @@ class SurpacProcess:
 
     # 从指定名称获取进程的pid数组
     # @staticmethod
-    def getPidsFromPName(self, pname):
+    def getPidsFromPName(self, pname: str):
         _result = subprocess.Popen("tasklist|findstr " + pname, shell=True, stdout=subprocess.PIPE,
                                    stdin=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True)
         _lines = _result.stdout.readlines()
