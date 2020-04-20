@@ -24,7 +24,7 @@ class MainWindow(QMainWindow):
         tabWidget.addTabItem(widget=webWidget, item_title='首页')
 
         # Surpac
-        surpac_process = SurpacProcess(config=config, logger=logger)
+        # surpac_process = SurpacProcess(config=config, logger=logger)
 
         # 指定tab不显示关闭按钮
         tabWidget.tabBar().setTabButton(0, QTabBar.RightSide, None)
