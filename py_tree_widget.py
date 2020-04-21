@@ -1,7 +1,11 @@
+import sys
+
 import yaml
 from PySide2.QtGui import QFont
-from PySide2.QtWidgets import QTreeWidgetItem, QTreeWidget
+from PySide2.QtWidgets import QTreeWidgetItem, QTreeWidget, QApplication
 
+from py_config import ConfigFactory
+from py_logging import LoggerFactory
 from py_thread import TbcRunThread, PyRunThread, TclRunThread
 
 
@@ -81,3 +85,13 @@ class TreeWidget(QTreeWidget):
             data = yaml.load(_f, yaml.loader.FullLoader)
             self.recursiveBuildMenu(root=root, menu_dict=data)
         return root
+
+
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    config = ConfigFactory(config='py_platform.ini').getConfig()
+    logger = LoggerFactory(config=config).getLogger()
+
+
+
+    sys.exit(app.exec_())

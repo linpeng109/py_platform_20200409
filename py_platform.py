@@ -6,7 +6,7 @@ from PySide2.QtWidgets import QApplication
 
 from py_config import ConfigFactory
 from py_logging import LoggerFactory
-from py_mainWindow import MainWindow
+from py_main_window import MainWindow
 
 if __name__ == '__main__':
     # win环境编译时应用，解决win环境mutilprocess的fork兼容问题
