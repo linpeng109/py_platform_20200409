@@ -30,17 +30,16 @@ class ShortCuts():
         linked_to_file = shell_link.GetPath(shell.SLGP_UNCPRIORITY)[0]
         return linked_to_file
 
-    def getSurpacCmdList(self, program_data_path: str):
+    def getSurpacCmdList(self):
         surpac_cmd_list = []
-        lnk_list = os.listdir(short_cuts.PROGRAM_DATA_PATH)
+        lnk_list = os.listdir(self.PROGRAM_DATA_PATH)
         for lnk in lnk_list:
-            lnk_file = os.path.join(short_cuts.PROGRAM_DATA_PATH, lnk)
+            lnk_file = os.path.join(self.PROGRAM_DATA_PATH, lnk)
             if Path.filenameIsContains(lnk_file, 'surpac'):
-                result = short_cuts.resolve_shortcut(lnk_file)
+                result = self.resolve_shortcut(lnk_file)
                 if '_x64' in result:
                     result = result.replace('Program Files (x86)', 'Program Files')
                 surpac_cmd_list.append(result)
-                # logger.debug(result)
         return surpac_cmd_list
 
 
@@ -48,5 +47,5 @@ if __name__ == '__main__':
     config = ConfigFactory(config='py_platform.ini').getConfig()
     logger = LoggerFactory(config=config).getLogger()
     short_cuts = ShortCuts(config=config, logger=logger)
-    surpacList = short_cuts.getSurpacCmdList(program_data_path=short_cuts.PROGRAM_DATA_PATH)
+    surpacList = short_cuts.getSurpacCmdList()
     logger.debug(surpacList)

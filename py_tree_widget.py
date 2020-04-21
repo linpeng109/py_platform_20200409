@@ -24,20 +24,20 @@ class TreeWidget(QTreeWidget):
                 print('tbc script')
                 tbcThread = TbcRunThread(port=self.port, item=item)
                 tbcThread.start()
+                # tbcThread.join()
                 raise ValueError("tbc进程正常终止")
-                tbcThread.join()
 
             if ('.tcl' in item.text(2)):
                 tclThread = TclRunThread(port=self.port, item=item)
                 tclThread.start()
+                # tclThread.join()
                 raise ValueError("tcl进程正常终止")
-                tclThread.join()
 
             if ('.py' in item.text(2)):
                 pyThread = PyRunThread(port=self.port, item=item)
                 pyThread.start()
+                # pyThread.join()
                 raise ValueError("py进程正常终止")
-                pyThread.join()
 
     def recursiveBuildMenu(self, root: QTreeWidgetItem, menu_dict: dict):
         for key in menu_dict:

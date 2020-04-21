@@ -1,4 +1,4 @@
-from socket import socket
+from socket import socket, AF_INET, SOCK_STREAM
 
 
 class SurpacSocketClient:
@@ -9,7 +9,7 @@ class SurpacSocketClient:
         self.PORT = port
         self.ENCODE = encode
         self.ADDR = (self.HOST, port)
-        self.tcpCliSock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.tcpCliSock = socket(AF_INET, SOCK_STREAM)
         self.tcpCliSock.connect(self.ADDR)
 
     def sendMsg(self, msg):

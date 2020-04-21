@@ -1,0 +1,367 @@
+child1:
+  text: 'Preparation'
+  descript: 'In the current working directory of Surpac, create a project folder based on the project name you entered and create a common folder for the module'
+  children:
+    child11:
+      text: 'Create directory structure'
+      decript: 'Create directory structure'
+      scl: 'p10001_创建目录结构.py'
+child2:
+  text: 'Geological Database'
+  descript: 'Create a geological database based on the raw data'
+  children:
+    child21:
+      text: 'New Database'
+      descript: 'New Geological Database'
+      scl: 'p12001_创建地质数据库.py'
+    child23:
+      text: 'Load litho color pattern info'
+      descript: 'Import lithology color pattern information'
+      scl: 'p12003_导入岩性_颜色花纹信息.py'
+    child24:
+      text: 'Display Style'
+      descript: 'Set the drill display style'
+      scl: 'p12010_设置显示风格2019.py'
+    child25:
+      text: 'Load Segment Information'
+      descript: 'Segment information is written to the database'
+      scl: 'p12102_将矿段信息写入数据库.py'
+    child26:
+      text: 'Display'
+      descript: 'Display databases'
+      scl: 'p12018_显示数据库.py'
+    child27:
+      text: 'New Constraint'
+      descript: 'Add display constraint'
+      scl: 'p12020_添加钻孔显示约束.py'
+    child28:
+      text: 'Clear Constraints'
+      descript: 'Clear all constraints'
+      scl: 'CLEAR ALL DRILLHOLE CONSTRAINTS'
+child3:
+  text: 'Exploration Line'
+  descript: 'According to "exploration line" and "baseline" measurement results, imported into the database'
+  children:
+    child31:
+      text: 'Imported Exploration Line'
+      descript: 'Imported Exploration Line'
+      scl: 'p13001_导入勘探线.py'
+    child32:
+      text: 'Imported Base Line'
+      descript: '导入基线'
+      scl: 'p13201_导入纵投影基线.py'
+child4:
+  text: '剖面解译'
+  descript: '在勘探线剖面上解译矿体、地层、岩体等地质信息'
+  children:
+    child41:
+      text: '创建解译剖面文件夹'
+      descript: '创建解译剖面文件夹'
+      scl: 'p14001_创建剖面解译目录.py'
+
+    child43:
+      text: '切剖面'
+      descript: '切剖面'
+      scl: 'p14200_切剖面.py'
+    child44:
+      text: '取消剖面模式'
+      descript: '取消剖面模式'
+      scl: 'DELETE CUTTING PLANES'
+    child45:
+      text: '剖面解译外推'
+      descript: '剖面解译外推'
+      scl: 'p14020_剖面矿体解译外推.py'
+    child46:
+      text: '当前剖面切实体剖面线'
+      descript: '当前剖面切实体剖面线'
+      scl: 'p14203_切制实体剖面线.py'
+    child47:
+      text: '所有剖面切实体剖面线'
+      descript: '所有剖面切实体剖面线'
+      scl: 'p14206_所有剖面切制实体剖面线.py'
+    child48:
+      text: '当前剖面切块模型'
+      descript: '当前剖面切块模型'
+      scl: 'p14213_当前剖面切块模型.py'
+    child49:
+      text: '所有剖面切块模型'
+      descript: '所有剖面切块模型'
+      scl: 'p14216_所有剖面切切块模型.py'
+    child410:
+      text: '绘制剖面图范围线'
+      descript: '绘制剖面图范围线'
+      scl: 'p14303_绘制剖面绘图范围线.py'
+    child411:
+      text: '调整剖面图范围线'
+      descript: '调整剖面图范围线'
+      scl: 'p14305_调整剖面范围线.py'
+child5:
+  text: '中段解译'
+  descript: '在中段上解译矿体、地层、岩体等地质信息'
+  children:
+    child51:
+      text: '中段信息导入数据库'
+      descript: '中段信息导入数据库'
+      scl: 'p14502_将中段信息写入数据库.py'
+    child52:
+      text: '创建解译中段文件夹'
+      descript: '创建解译中段文件夹'
+      scl: 'p14510_创建中段解译目录.py'
+
+    child54:
+      text: '切中段'
+      descript: '切中段'
+      scl: 'p14700_切中段.py'
+    child55:
+      text: '取消切中段'
+      descript: '取消切中段'
+      scl: 'DELETE CUTTING PLANES'
+
+    child56:
+      text: '中段矿体解译外推'
+      descript: '中段矿体解译外推'
+      scl: 'p14520_中段矿体解译外推.py'
+
+    child57:
+      text: '当前中段切实体剖面'
+      descript: '当前中段切实体剖面'
+      scl: 'p14703_当前中段切实体剖面线.py'
+
+    child58:
+      text: '所有中段切实体剖面'
+      descript: '所有中段切实体剖面'
+      scl: 'p14706_所有中段切实体剖面线.py'
+
+    child59:
+      text: '当前中段钻井工程位置'
+      descript: '当前中段钻井工程位置'
+      scl: 'p14710_当前中段钻井工程位置.py'
+
+    child510:
+      text: '所有中段钻井工程位置'
+      descript: '所有中段钻井工程位置'
+      scl: 'p14713_所有中段钻井工程位置.py'
+
+    child511:
+      text: '当前中段切块模型'
+      descript: '当前中段切块模型'
+      scl: 'p14720_当前中段块模型切面.py'
+    child512:
+      text: '所有中段切块模型'
+      descript: '所有中段切块模型'
+      scl: 'p14722_所有中段块模型切面.py'
+    child513:
+      text: '绘制中段图范围线'
+      descript: '绘制中段图范围线'
+      scl: 'p14803_绘制中段图范围线.py'
+    child514:
+      text: '调整中段图范围线'
+      descript: '调整中段图范围线'
+      scl: 'p14805_调整中段图范围线.py'
+child6:
+  text: '实体'
+  descript: '根据剖面和中段的解译结果，创建矿体、地层和岩体等地质体的实体模型'
+  children:
+    child61:
+      text: '按中段插入标高点'
+      descript: '按中段插入标高点'
+      scl: 'p15080_在图层中的插入标高点.py'
+    child62:
+      text: '矿体重新编号'
+      descript: '矿体重新编号'
+      scl: 'p15100_矿体重新编号.py'
+    child63:
+      text: '矿体信息写入数据库'
+      descript: '矿体信息写入数据库'
+      scl: 'p15530_导入矿体信息.py'
+child7:
+  text: '基础统计'
+  descript: '全区样品和矿体内的样品及矿体产状、厚度的统计'
+  children:
+    child71:
+      text: '提取全区样品'
+      descript: '提取全区样品'
+      scl: 'p16001_提取全部样品2019.py'
+    child72:
+      text: '样长基础统计'
+      descript: '样长基础统计'
+      scl: 'p16004_全区样品基础统计.py'
+    child74:
+      text: '全区样品基础统计'
+      descript: '全区样品基础统计'
+      scl: 'p16004_全区样品基础统计.py'
+    child73:
+      text: '标识工程见矿部位'
+      descript: '标识工程见矿部位'
+      scl: 'p16018_标识工程见矿部位all2019.py'
+
+    child75:
+      text: '样品表赋矿体号'
+      descript: '样品表赋矿体号'
+      scl: 'p16020_赋样品表中矿体编号.py'
+    child76:
+      text: '提取矿体内样品'
+      descript: '提取矿体内样品'
+      scl: 'p16021_提取矿体内样品all.py'
+    child77:
+      text: '矿体内样品基础统计'
+      descript: '矿体内样品基础统计'
+      scl: 'p16022_矿体内样品基础统计all.py'
+    child79:
+      text: '计算矿体总体产状'
+      descript: '计算矿体总体产状'
+      scl: 'p16092_计算矿体总体产状.py'
+    child78:
+      text: '矿体穿矿厚度统计'
+      descript: '矿体穿矿厚度统计'
+      scl: 'p16512_矿体穿矿厚度统计ok2019.py'
+child8:
+  text: '特高品位处理'
+  descript: '按矿体统计矿体内样品品位，根据各矿体统计特征确定并处理各矿体的特高品位'
+  children:
+    child81:
+      text: '特高品位处理'
+      descript: '特高品位处理'
+      scl: 'p17002_特高品位处理2019new.py'
+child9:
+  text: '组合'
+  descript: '根据样品的数据，对样品进行等长化处理'
+  children:
+    child91:
+      text: '根据工程组合'
+      descript: '根据工程组合'
+      scl: 'p18002_根据勘探工程组合.py'
+child10:
+  text: '地质统计'
+  descript: '根据矿体的组合样品数据，制作变异函数并进行交叉验证'
+  children:
+    child101:
+      text: '变异函数'
+      descript: '变异函数'
+      scl: 'VARIOGRAM MODELLING'
+    child102:
+      text: '交叉验证'
+      descript: '交叉验证'
+      scl: 'p19002_交叉验证.py'
+child11:
+  text: '块模型'
+  descript: '创建块模型并进行估值和赋值，资源储量汇总报告'
+  children:
+    child111:
+      text: '创建块模型'
+      descript: '创建块模型'
+      scl: 'p20002_创建块模型.py'
+    child112:
+      text: '赋矿体编号'
+      descript: '赋矿体编号'
+      scl: 'p20012_赋矿体编号.py'
+    child113:
+      text: '块体模型赋矿体中心面产状'
+      descript: '块体模型赋矿体中心面产状'
+      scl: 'p20036_块体模型赋矿体中心面产状.py'
+    child115:
+      text: '距离幂次反比法估值'
+      descript: '距离幂次反比法估值'
+      scl: 'p20042_距离幂次反比法估值.py'
+    child116:
+      text: '普通克立格法估值'
+      descript: '普通克立格法估值'
+      scl: 'p20046_普通克立格法估值.py'
+
+    child114:
+      text: '赋资源储量分类'
+      descript: '赋资源储量分类'
+      scl: 'p20050_赋矿体储量类别.py'
+
+    child334:
+      text: '赋工业矿低品位矿'
+      descript: '赋工业矿低品位矿'
+      scl: 'p20060_赋工业矿低品位矿.py'
+
+
+    child335:
+      text: '赋矿岩类型'
+      descript: '赋工业矿低品位矿'
+      scl: 'p20065_赋矿石围岩类型.py'
+    child118:
+      text: '赋矿石体重'
+      descript: '赋矿石体重'
+      scl: 'p20070_赋矿体比重.py.py'
+    child119:
+      text: '赋矿种'
+      descript: '赋矿种'
+      scl: 'p20080_赋矿种.py'
+
+    child117:
+      text: '赋保有已采'
+      descript: '赋保有已采'
+      scl: 'p20090_赋保有已采.py'
+
+    child337:
+      text: '赋最终境界'
+      descript: '赋最终境界'
+      scl: 'p20092_赋最终境界.py'
+
+    child338:
+      text: '赋氧化原生'
+      descript: '赋氧化原生'
+      scl: 'p20094_赋氧化原生.py'
+
+    child339:
+      text: '赋矿权范围'
+      descript: '赋矿权范围'
+      scl: 'p20100_赋矿权范围.py'
+
+    child340:
+      text: '距离反法估值报量'
+      descript: '距离反法估值报量'
+      scl: 'p20200_距离反法估值报量.py'
+
+    child341:
+      text: '克立格法估值报量'
+      descript: '克立格法估值报量'
+      scl: 'p20202_克立格估值报量.py'
+
+child33:
+  text: '块模型检验'
+  descript: '块体模型估值合理性检验'
+  children:
+    child1110:
+      text: '品位吨位曲线'
+      descript: '品位吨位曲线'
+      scl: 'p20300_品位吨位曲线.py'
+
+    child1111:
+      text: '块模型趋势分析'
+      descript: '块模型趋势分析'
+      scl: 'p20500_块模型趋势分析.py'
+child833:
+  text: '工程测量'
+  descript: '导入测量导线点'
+  children:
+    child1110:
+      text: '导入测量导线点'
+      descript: '导入探矿工程的测量导线点'
+      scl: 'p40001_将导线测量点信息写入数据库.py'
+
+child13:
+  text: '绘图'
+  descript: '绘制报告图件'
+  children:
+    child131:
+      text: '绘地质剖面图'
+      descript: '绘地质剖面图'
+      scl: 'p40012_绘制剖面图new.py'
+    child133:
+      text: '绘制中段地质图'
+      descript: '绘制中段地质图'
+      scl: 'p40812_绘制中段地质图.py'
+
+child14:
+  text: '关于'
+  descript: '关于产品'
+  children:
+    child131:
+      text: '关于'
+      descript: '关于'
+      scl: 'p90000_about.py'

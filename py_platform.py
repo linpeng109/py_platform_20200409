@@ -17,6 +17,7 @@ if __name__ == '__main__':
     logger = LoggerFactory(config=config).getLogger()
     # 启动应用
     app = QApplication(sys.argv)
+
     # 启动主窗口
     mainWindow = MainWindow(config=config, logger=logger)
     mainWindow.showMaximized()
