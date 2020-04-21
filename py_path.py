@@ -30,6 +30,14 @@ class Path():
             os.makedirs(outputPath)
             print('The Path is not exist. Created (%s).' % outputPath)
 
+    @classmethod
+    def resource_path(relative_path: str):
+        if getattr(sys, 'frozen', False):
+            base_path = sys._MEIPASS
+        else:
+            base_path = os.path.abspath(".")
+        return os.path.join(base_path, relative_path)
+
 
 if __name__ == '__main__':
     # fullname = '/home/pi/Shared/AFS-8510.xlsx'

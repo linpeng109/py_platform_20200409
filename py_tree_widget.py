@@ -1,7 +1,11 @@
+import sys
+
 import yaml
 from PySide2.QtGui import QFont
-from PySide2.QtWidgets import QTreeWidgetItem, QTreeWidget
+from PySide2.QtWidgets import QTreeWidgetItem, QTreeWidget, QApplication
 
+from py_config import ConfigFactory
+from py_logging import LoggerFactory
 from py_thread import TbcRunThread, PyRunThread, TclRunThread
 
 
@@ -24,20 +28,20 @@ class TreeWidget(QTreeWidget):
                 print('tbc script')
                 tbcThread = TbcRunThread(port=self.port, item=item)
                 tbcThread.start()
+                # tbcThread.join()
                 raise ValueError("tbc进程正常终止")
-                tbcThread.join()
 
             if ('.tcl' in item.text(2)):
                 tclThread = TclRunThread(port=self.port, item=item)
                 tclThread.start()
+                # tclThread.join()
                 raise ValueError("tcl进程正常终止")
-                tclThread.join()
 
             if ('.py' in item.text(2)):
                 pyThread = PyRunThread(port=self.port, item=item)
                 pyThread.start()
+                # pyThread.join()
                 raise ValueError("py进程正常终止")
-                pyThread.join()
 
     def recursiveBuildMenu(self, root: QTreeWidgetItem, menu_dict: dict):
         for key in menu_dict:
@@ -81,3 +85,13 @@ class TreeWidget(QTreeWidget):
             data = yaml.load(_f, yaml.loader.FullLoader)
             self.recursiveBuildMenu(root=root, menu_dict=data)
         return root
+
+
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    config = ConfigFactory(config='py_platform.ini').getConfig()
+    logger = LoggerFactory(config=config).getLogger()
+
+
+
+    sys.exit(app.exec_())

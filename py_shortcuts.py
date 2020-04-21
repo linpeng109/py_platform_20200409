@@ -40,7 +40,6 @@ class ShortCuts():
                 if '_x64' in result:
                     result = result.replace('Program Files (x86)', 'Program Files')
                 surpac_cmd_list.append(result)
-                # logger.debug(result)
         return surpac_cmd_list
 
 

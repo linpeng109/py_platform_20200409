@@ -6,7 +6,7 @@ from PySide2.QtWidgets import QApplication
 
 from py_config import ConfigFactory
 from py_logging import LoggerFactory
-from py_mainWindow import MainWindow
+from py_main_window import MainWindow
 
 if __name__ == '__main__':
     # win环境编译时应用，解决win环境mutilprocess的fork兼容问题
@@ -17,6 +17,7 @@ if __name__ == '__main__':
     logger = LoggerFactory(config=config).getLogger()
     # 启动应用
     app = QApplication(sys.argv)
+
     # 启动主窗口
     mainWindow = MainWindow(config=config, logger=logger)
     mainWindow.showMaximized()
