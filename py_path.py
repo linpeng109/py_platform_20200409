@@ -1,5 +1,6 @@
 import os
 import os.path
+import sys
 
 
 class Path():
@@ -31,7 +32,7 @@ class Path():
             print('The Path is not exist. Created (%s).' % outputPath)
 
     @classmethod
-    def resource_path(relative_path: str):
+    def resource_path(self,relative_path: str):
         if getattr(sys, 'frozen', False):
             base_path = sys._MEIPASS
         else:

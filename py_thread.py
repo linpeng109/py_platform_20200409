@@ -2,6 +2,7 @@ import importlib
 import threading
 
 from py_socket import SurpacSocketClient
+from py_path import Path
 
 
 class TbcRunThread(threading.Thread):
@@ -59,7 +60,7 @@ class PyRunThread(threading.Thread):
         module_name = 'sclScript.%s' % str(self.item.text(2)).split('.')[0]
         # module_name = '%s' % str(self.item.text(2)).split('.')[0]
         print('module_name=%s' % module_name)
-        metaClass = importlib.import_module(module_name)
+        metaClass = importlib.import_module(Path.resource_path(module_name))
         sclCommand = metaClass.message
         surpac_socket = SurpacSocketClient(int(self.port), 'gbk')
         message = 'RCTL\n' + 'TCLSCRIPTBEGIN\n' + sclCommand + ' TCLSCRIPTEND\n'

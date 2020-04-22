@@ -14,16 +14,22 @@ class TreeWidget(QTreeWidget):
         super(TreeWidget, self).__init__()
         self.config = config
         self.logger = logger
+        surpac_scl_cfg = self.config.get('surpac', 'surpac_scl_cfg')
+        self.rebuildTreeWidget(surpac_scl_cfg=surpac_scl_cfg, port=port)
+
+    # 重构Tree组件
+    def rebuildTreeWidget(self, surpac_scl_cfg, port):
+        self.clear()
         self.treeWidget = QTreeWidgetItem(self)
         self.port = port
         self.setColumnCount(1)
         self.setHeaderHidden(True)
-        self.itemClicked.connect(self.onItemClicked)
-        surpac_scl_cfg = self.config.get('surpac', 'surpac_scl_cfg')
-        self.menus = self.buildMenus(surpac_scl_cfg=surpac_scl_cfg)
-        self.addTopLevelItem(self.menus)
+        self.itemClicked.connect(self.__on_item_clicked)
+        self.menus = self.__build_root(surpac_scl_cfg=surpac_scl_cfg)
+        self.topLevelItem = self.menus
 
-    def onItemClicked(self, item):
+    # 处理Tree单击触发
+    def __on_item_clicked(self, item):
         if (item.text(2)):
             if ('.tbc' in item.text(2)):
                 print('tbc script')
@@ -44,7 +50,8 @@ class TreeWidget(QTreeWidget):
                 # pyThread.join()
                 raise ValueError("py进程正常终止")
 
-    def recursiveBuildMenu(self, root: QTreeWidgetItem, menu_dict: dict):
+    # Tree递归构建
+    def __recursive_build_menu(self, root: QTreeWidgetItem, menu_dict: dict):
         for key in menu_dict:
             item = QTreeWidgetItem()
             item_font = QFont()
@@ -67,12 +74,13 @@ class TreeWidget(QTreeWidget):
                 pass
             try:
                 children = menu_dict[key]['children']
-                self.recursiveBuildMenu(item, children)
+                self.__recursive_build_menu(item, children)
             except KeyError:
                 pass
             root.addChild(item)
 
-    def buildMenus(self, surpac_scl_cfg: str):
+    # 构建Tree组件
+    def __build_root(self, surpac_scl_cfg: str):
         surpac_scl_title = self.config.get('surpac', 'surpac_scl_title')
         surpac_scl_encoding = self.config.get('surpac', 'surpac_scl_encoding')
         root = QTreeWidgetItem(self)
@@ -83,7 +91,7 @@ class TreeWidget(QTreeWidget):
         root.setExpanded(1)
         with open(file=surpac_scl_cfg, encoding=surpac_scl_encoding) as _f:
             data = yaml.load(_f, yaml.loader.FullLoader)
-            self.recursiveBuildMenu(root=root, menu_dict=data)
+            self.__recursive_build_menu(root=root, menu_dict=data)
         return root
 
 

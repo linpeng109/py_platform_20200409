@@ -1,30 +1,51 @@
-from PySide2.QtWidgets import QWidget, QVBoxLayout, QPushButton
+from PySide2.QtWidgets import QWidget, QVBoxLayout, QPushButton, QHBoxLayout
 
 from py_choice_dialog import ChoiceDialog
+from py_shortcuts import ShortCuts
 from py_tree_widget import TreeWidget
 
 
 class RightWidget(QWidget):
-    def __init__(self, config, logger, ports, callback_func):
+    def __init__(self, config, logger, ports):
         super(RightWidget, self).__init__()
         self.config = config
         self.logger = logger
+        self.ports = ports
 
-        # select_widget
-        self.select_widget = QPushButton('切换')
-        language_choice = ['en', 'cn']
-        # callback_func = lambda id: print(language_choice[id])
-        choice_dialog = ChoiceDialog(choices=language_choice, title='选择语言', callback=self.callback_func)
-        self.select_widget.clicked.connect(lambda event: choice_dialog.show())
+        # language_choice_widget
+        language_choice_button = QPushButton('语言')
+        language_choice_button.setFixedSize(120, 30)
+        language_choice = ['py_surpac_en.yml', 'py_surpac_cn.yml']
+        language_choice_dialog = ChoiceDialog(choices=language_choice, title='选择语言',
+                                              callback=self.language_choice_callback_func)
+        language_choice_button.clicked.connect(lambda event: language_choice_dialog.show())
+
+        # surpac_choice_widget
+        surpac_choice_button = QPushButton('Surpac版本')
+        surpac_choice_button.setFixedSize(120, 30)
+        surpac_choice = ShortCuts(config=config, logger=logger).getSurpacCmdList()
+        surpac_choice_widget_dialog = ChoiceDialog(choices=surpac_choice, title='选择Surpac版本',
+                                                   callback=self.surpac_choice_callback_func)
+        surpac_choice_button.clicked.connect(lambda event: surpac_choice_widget_dialog.show())
 
         # tree_widget
-        tree_widget = TreeWidget(config=config, logger=logger, port=ports[0])
+        self.tree_widget = TreeWidget(config=config, logger=logger, port=ports[0])
+        h_layout = QHBoxLayout()
+        h_layout.addWidget(surpac_choice_button)
+        h_layout.addWidget(language_choice_button)
+        choice_button_group = QWidget()
+        choice_button_group.setLayout(h_layout)
 
-        layout = QVBoxLayout()
-        layout.addWidget(self.select_widget)
-        layout.addWidget(tree_widget)
+        v_layout = QVBoxLayout()
+        v_layout.addWidget(choice_button_group)
+        v_layout.addWidget(self.tree_widget)
 
-        self.setLayout(layout)
+        self.setLayout(v_layout)
 
-    def callback_func(self, result):
-        self.select_widget.setText('aabb')
+    def surpac_choice_callback_func(self, result):
+        self.logger.debug(result)
+        # self.tree_widget.rebuildTreeWidget('aabb')
+
+    def language_choice_callback_func(self, result):
+        self.logger.debug(result)
+        self.tree_widget.rebuildTreeWidget(surpac_scl_cfg=result, port=self.ports[0])
