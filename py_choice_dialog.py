@@ -35,7 +35,7 @@ class ChoiceDialog(QDialog):
 
     def accept(self):
         super(ChoiceDialog, self).accept()
-        self.callback(self.choice_id)
+        self.callback(self.choices[self.choice_id])
 
     def choiceChange(self):
         self.choice_id = self.choice_button_group.checkedId()
@@ -48,6 +48,7 @@ if __name__ == '__main__':
     logger = LoggerFactory(config=config).getLogger()
     short_cuts = ShortCuts(config=config, logger=logger)
     surpac_choice = short_cuts.getSurpacCmdList()
+
 
     # 定义回调函数
     def callback_func(id):

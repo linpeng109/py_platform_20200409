@@ -37,7 +37,7 @@ class MainWindow(QMainWindow):
         surpac_ports = surpac_process.getPortsFromPid(pid=surpac_pid)
 
         # right_widget
-        right_widget = RightWidget(config=config, logger=logger, ports=surpac_ports, callback_func=self.callback_func)
+        right_widget = RightWidget(config=config, logger=logger, ports=surpac_ports)
 
         # work_widget
         work_widget = QSplitter()
