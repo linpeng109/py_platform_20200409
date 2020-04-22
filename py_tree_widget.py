@@ -19,7 +19,8 @@ class TreeWidget(QTreeWidget):
         self.setColumnCount(1)
         self.setHeaderHidden(True)
         self.itemClicked.connect(self.onItemClicked)
-        self.menus = self.buildMenus()
+        surpac_scl_cfg = self.config.get('surpac', 'surpac_scl_cfg')
+        self.menus = self.buildMenus(surpac_scl_cfg=surpac_scl_cfg)
         self.addTopLevelItem(self.menus)
 
     def onItemClicked(self, item):
@@ -71,8 +72,7 @@ class TreeWidget(QTreeWidget):
                 pass
             root.addChild(item)
 
-    def buildMenus(self):
-        surpac_scl_cfg = self.config.get('surpac', 'surpac_scl_cfg')
+    def buildMenus(self, surpac_scl_cfg: str):
         surpac_scl_title = self.config.get('surpac', 'surpac_scl_title')
         surpac_scl_encoding = self.config.get('surpac', 'surpac_scl_encoding')
         root = QTreeWidgetItem(self)
@@ -91,7 +91,5 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     config = ConfigFactory(config='py_platform.ini').getConfig()
     logger = LoggerFactory(config=config).getLogger()
-
-
 
     sys.exit(app.exec_())
