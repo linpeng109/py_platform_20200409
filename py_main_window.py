@@ -5,7 +5,7 @@ from py_right_widget import RightWidget
 from py_shortcuts import ShortCuts
 from py_surpac import SurpacProcess
 from py_tab_widget import TabWidget
-from py_web import WebEngineView
+from py_web_widget import WebEngineView
 
 
 # 装配主窗口

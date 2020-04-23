@@ -11,20 +11,19 @@ from PySide2.QtGui import QWindow
 from PySide2.QtWidgets import QWidget
 
 
+# 生成surpac工作区widget
 class SurpacProcess:
     def __init__(self, config, logger):
         self.logger = logger
         self.config = config
 
     # 启动执行文件返回进程pid
-    # @staticmethod
     def startProcess(self, cmd):
         pid = subprocess.Popen(cmd, stdout=subprocess.PIPE,
                                stdin=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True).pid
         return pid
 
     # 从指定pid获取窗口句柄（通过回调函数）
-    # @staticmethod
     def getHwndFromPid(self, pid):
         def callback(hwnd, hwnds):
             if win32gui.IsWindowVisible(hwnd) and win32gui.IsWindowEnabled(hwnd):
@@ -39,7 +38,6 @@ class SurpacProcess:
         return hwnds
 
     # 从指定名称获取进程的pid数组
-    # @staticmethod
     def getPidsFromPName(self, pname: str):
         _result = subprocess.Popen("tasklist|findstr " + pname, shell=True, stdout=subprocess.PIPE,
                                    stdin=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True)
@@ -52,7 +50,6 @@ class SurpacProcess:
         return pids
 
     # 根据pid获取运行端口
-    # @staticmethod
     def getPortsFromPid(self, pid):
         _result = subprocess.Popen("netstat -aon|findstr " + str(pid), shell=True, stdout=subprocess.PIPE,
                                    stderr=subprocess.PIPE, stdin=subprocess.PIPE, close_fds=True)
@@ -72,7 +69,6 @@ class SurpacProcess:
         return ports
 
     # 关闭列出的所有进程id号的进程
-    # @staticmethod
     def killProcess(self, pids):
         for pid in pids:
             _pid = int(pid)
