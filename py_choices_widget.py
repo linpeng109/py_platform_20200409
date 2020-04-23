@@ -2,15 +2,17 @@ from PySide2.QtWidgets import QWidget, QVBoxLayout, QPushButton, QHBoxLayout
 
 from py_choice_dialog import ChoiceDialog
 from py_shortcuts import ShortCuts
+from py_surpac_widget import SurpacContainerWidget
 from py_tree_widget import TreeWidget
 
 
 class RightWidget(QWidget):
-    def __init__(self, config, logger, ports):
+    def __init__(self, config, logger, ports, surpac_widget: SurpacContainerWidget):
         super(RightWidget, self).__init__()
         self.config = config
         self.logger = logger
         self.ports = ports
+        self.surpac_widget = surpac_widget
 
         # language_choice_widget
         language_choice_button = QPushButton('语言')
@@ -44,7 +46,7 @@ class RightWidget(QWidget):
 
     def surpac_choice_callback_func(self, result):
         self.logger.debug(result)
-        # self.tree_widget.rebuildTreeWidget('aabb')
+        self.surpac_widget.build_surpac_widget(result)
 
     def language_choice_callback_func(self, result):
         self.logger.debug(result)

@@ -8,12 +8,13 @@ import win32con
 import win32gui
 import win32process
 from PySide2.QtGui import QWindow
-from PySide2.QtWidgets import QWidget
+from PySide2.QtWidgets import QWidget, QBoxLayout
 
 
 # 生成surpac工作区widget
-class SurpacProcess:
+class SurpacContainerWidget(QWidget):
     def __init__(self, config, logger):
+        super(SurpacContainerWidget, self).__init__()
         self.logger = logger
         self.config = config
 
@@ -115,3 +116,11 @@ class SurpacProcess:
     def convertWndToWidget(self, hwnd):
         native_wnd = QWindow.fromWinId(hwnd)
         return QWidget.createWindowContainer(native_wnd)
+
+    # 生成surpac工作区widget
+    def build_surpac_widget(self, cmd: str):
+        self.surpac_pid = self.startProcess(cmd)
+        hwnd = self.getTheMainWindow(pid=self.surpac_pid, spTitle='Surpac')
+        self.surpac_port = self.getPortsFromPid(pid=self.surpac_pid)
+        self.surpac_widget = self.convertWndToWidget(hwnd=hwnd)
+        return self.surpac_widget, self.surpac_port, self.surpac_pid
