@@ -1,7 +1,7 @@
 import sys
 
 from PySide2.QtWidgets import QDialog, QApplication, QButtonGroup, QVBoxLayout, QRadioButton, QDialogButtonBox
-from PySide2.QtCore import Qt
+from PySide2.QtCore import Qt, Slot, Signal
 
 from py_config import ConfigFactory
 from py_logging import LoggerFactory
@@ -9,11 +9,14 @@ from py_shortcuts import ShortCuts
 
 
 class ChoiceDialog(QDialog):
-    def __init__(self, title: str, choices: list, callback):
+    # 定义选择信号
+    choices_signal = Signal(str)
+
+    # 初始化
+    def __init__(self, title: str, choices: list):
         super(ChoiceDialog, self).__init__()
         self.setWindowTitle(title)
         self.setModal(True)
-        self.callback = callback
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)
         self.choices = choices
         self.choice_button_group = QButtonGroup()
@@ -35,28 +38,8 @@ class ChoiceDialog(QDialog):
         self.setLayout(layout)
 
     def accept(self):
+        self.choices_signal.emit(self.choices[self.choice_id])
         super(ChoiceDialog, self).accept()
-        self.callback(self.choices[self.choice_id])
 
     def choiceChange(self):
         self.choice_id = self.choice_button_group.checkedId()
-
-
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
-
-    config = ConfigFactory(config='py_platform.ini').getConfig()
-    logger = LoggerFactory(config=config).getLogger()
-    short_cuts = ShortCuts(config=config, logger=logger)
-    surpac_choice = short_cuts.getSurpacCmdList()
-
-
-    # 定义回调函数
-    def callback_func(id):
-        print(surpac_choice[id])
-
-
-    surpac_choice_dialog = ChoiceDialog(choices=surpac_choice, title='选择surpac版本', callback=callback_func)
-    surpac_choice_dialog.show()
-
-    sys.exit(app.exec_())

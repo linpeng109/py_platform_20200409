@@ -1,10 +1,11 @@
-from PySide2.QtCore import QUrl, Qt
+from PySide2.QtCore import QUrl, Qt, Slot
 from PySide2.QtWidgets import *
 
-from py_choices_widget import RightWidget
+from py_choices_widget import ChoicesWidget
 from py_shortcuts import ShortCuts
 from py_surpac_widget import SurpacContainerWidget
 from py_tab_widget import TabWidget
+from py_tree_widget import TreeWidget
 from py_web_widget import WebEngineView
 
 
@@ -27,19 +28,45 @@ class MainWindow(QMainWindow):
 
         # surpac_widget
         surpac_process = SurpacContainerWidget(config=config, logger=logger)
+        # 销毁所有surpac2名称的进程
+        if (config.get('surpac', 'kill_other_surpac_process')):
+            pids = surpac_process.getPidsFromPName('surpac2')
+            surpac_process.killProcess(pids)
+        else:
+            pass
+        # 从快捷方式中获取所有已经安装的surpac的启动命令
         short_cuts = ShortCuts(config=config, logger=logger)
         surpac_cmd_list = short_cuts.getSurpacCmdList()
-        surpac_widget = surpac_process.build_surpac_widget(surpac_cmd_list[0])
-        surpac_ports = surpac_widget.getPortsFromPid(surpac_widget.surpac_pid)
+        self.surpac_pid = surpac_process.startProcess(surpac_cmd_list[0])
+        surpac_hwnd = surpac_process.getTheMainWindow(pid=self.surpac_pid, spTitle='Surpac')
+        self.surpac_ports = surpac_process.getPortsFromPid(self.surpac_pid)
+        surpac_widget = surpac_process.convertWndToWidget(surpac_hwnd)
+
+        # choices_wigdet
+        self.choices_widget = ChoicesWidget(config=config, logger=logger, ports=self.surpac_ports)
+
+        # 选择语言信号与语言选择接收槽链接
+        self.choices_widget.language_choice_dialog.choices_signal.connect(self.language_choices_listener)
+        # Surpac版本选择信号与Surpac版本选择接收槽链接
+        self.choices_widget.surpac_choice_widget_dialog.choices_signal.connect(self.surpac_choices_listener)
+
+        # tree_widget
+        self.tree_widget = TreeWidget(config=config, logger=logger, port=self.surpac_ports[0])
 
         # right_widget
-        right_widget = RightWidget(config=config, logger=logger, ports=surpac_ports, surpac_widget=surpac_widget)
+        right_widget = QWidget()
+
+        v_layout = QVBoxLayout()
+        v_layout.addWidget(self.choices_widget)
+        v_layout.addWidget(self.tree_widget)
+        right_widget.setLayout(v_layout)
 
         # work_widget
         work_widget = QSplitter()
         work_widget.setOrientation(Qt.Horizontal)
-        work_widget.addWidget(surpac_widget.surpac_widget)
+        work_widget.addWidget(surpac_widget)
         work_widget.addWidget(right_widget)
+
         surpac_tag_title = config.get('surpac', 'surpac_tag_title')
         tab_widget.addTabItem(widget=work_widget, item_title=surpac_tag_title)
 
@@ -52,6 +79,18 @@ class MainWindow(QMainWindow):
 
         # 在窗口中央显示tab
         self.setCentralWidget(tab_widget)
+
+    # 语言选择信号接收槽
+    @Slot(str)
+    def language_choices_listener(self, result):
+        self.logger.debug(result)
+        self.setWindowTitle('English Language')
+        # self.tree_widget.rebuildTreeWidget(surpac_scl_cfg=result, port=self.surpac_ports[0])
+
+    # Surpac版本选择信号接收槽
+    @Slot(str)
+    def surpac_choices_listener(self, result):
+        self.logger.debug(result)
 
     def closeEvent(self, event):
         replay = QMessageBox.question(self, '操作提示', '是否退出应用？', QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
