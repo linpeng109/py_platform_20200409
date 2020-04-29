@@ -1,11 +1,5 @@
-import sys
-
-from PySide2.QtWidgets import QDialog, QApplication, QButtonGroup, QVBoxLayout, QRadioButton, QDialogButtonBox
-from PySide2.QtCore import Qt, Slot, Signal
-
-from py_config import ConfigFactory
-from py_logging import LoggerFactory
-from py_shortcuts import ShortCuts
+from PySide2.QtCore import Qt, Signal
+from PySide2.QtWidgets import QDialog, QButtonGroup, QVBoxLayout, QRadioButton, QDialogButtonBox
 
 
 class ChoiceDialog(QDialog):
@@ -38,8 +32,9 @@ class ChoiceDialog(QDialog):
         self.setLayout(layout)
 
     def accept(self):
-        self.choices_signal.emit(self.choices[self.choice_id])
+        # 先关闭对话框，然后发送消息
         super(ChoiceDialog, self).accept()
+        self.choices_signal.emit(self.choices[self.choice_id])
 
     def choiceChange(self):
         self.choice_id = self.choice_button_group.checkedId()

@@ -8,10 +8,13 @@ import win32con
 import win32gui
 import win32process
 from PySide2.QtGui import QWindow
-from PySide2.QtWidgets import QWidget, QBoxLayout
-
+from PySide2.QtWidgets import QWidget
 
 # 生成surpac工作区widget
+from py_config import ConfigFactory
+from py_logging import LoggerFactory
+
+
 class SurpacContainerWidget(QWidget):
     def __init__(self, config, logger):
         super(SurpacContainerWidget, self).__init__()
@@ -22,21 +25,38 @@ class SurpacContainerWidget(QWidget):
     def startProcess(self, cmd):
         pid = subprocess.Popen(cmd, stdout=subprocess.PIPE,
                                stdin=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True).pid
+        self.pid = pid
         return pid
+
+    def rebuildSurpacWidget(self, cmd):
+        self.killProcess(pids=[self.pid])
 
     # 从指定pid获取窗口句柄（通过回调函数）
     def getHwndFromPid(self, pid):
+
         def callback(hwnd, hwnds):
             if win32gui.IsWindowVisible(hwnd) and win32gui.IsWindowEnabled(hwnd):
                 _, found_pid = win32process.GetWindowThreadProcessId(hwnd)
                 if found_pid == pid:
-                    self.logger.debug(win32gui.GetWindowText(hwnd))
+                    # self.logger.debug(win32gui.GetWindowText(hwnd))
                     hwnds.append(hwnd)
             return True
 
         hwnds = []
         win32gui.EnumWindows(callback, hwnds)
         return hwnds
+
+    # 通过pid获取包含指定窗口特征名的窗口句柄
+    def getTheMainWindow(self, pid, spTitle):
+        hwnds = []
+        while True:
+            hwnds = self.getHwndFromPid(pid)
+            if (len(hwnds) > 0):
+                _title = win32gui.GetWindowText((hwnds[0]))
+                if (spTitle in _title):
+                    break
+            time.sleep(1)
+        return hwnds[0]
 
     # 从指定名称获取进程的pid数组
     def getPidsFromPName(self, pname: str):
@@ -67,6 +87,7 @@ class SurpacContainerWidget(QWidget):
                 .replace('00000LISTENING', '')
             if len(_port) <= 10:
                 ports.append(_port)
+            self.ports = ports
         return ports
 
     # 关闭列出的所有进程id号的进程
@@ -78,18 +99,6 @@ class SurpacContainerWidget(QWidget):
                 self.logger.debug('Process(pid=%s) has be killed' % pid)
             except OSError:
                 self.logger.debug('no such process(pid=%s)' % pid)
-
-    # 通过pid获取包含指定窗口特征名的窗口句柄
-    def getTheMainWindow(self, pid, spTitle):
-        hwnds = []
-        while True:
-            hwnds = self.getHwndFromPid(pid)
-            if (len(hwnds) > 0):
-                _title = win32gui.GetWindowText((hwnds[0]))
-                if (spTitle in _title):
-                    break
-            time.sleep(1)
-        return hwnds[0]
 
     # 显示窗口
     def showWindow(self, hwnd):
@@ -119,8 +128,20 @@ class SurpacContainerWidget(QWidget):
 
     # 生成surpac工作区widget
     def build_surpac_widget(self, cmd: str):
+        self.killProcess([self.pid])
         self.surpac_pid = self.startProcess(cmd)
         hwnd = self.getTheMainWindow(pid=self.surpac_pid, spTitle='Surpac')
-        self.surpac_port = self.getPortsFromPid(pid=self.surpac_pid)
+        self.surpac_ports = self.getPortsFromPid(pid=self.surpac_pid)
         self.surpac_widget = self.convertWndToWidget(hwnd=hwnd)
-        return self.surpac_widget, self.surpac_port, self.surpac_pid
+        return self.surpac_widget, self.surpac_ports, self.surpac_pid
+
+
+if __name__ == '__main__':
+    # 设置配置文件和日志
+    config = ConfigFactory(config='py_platform.ini').getConfig()
+    logger = LoggerFactory(config=config).getLogger()
+    surpac = SurpacContainerWidget(config=config, logger=logger)
+    pids = surpac.getPidsFromPName('Surpac')
+    surpac.killProcess(pids)
+    pid = surpac.startProcess(r'C:\Program Files\GEOVIA\Surpac\662_x64\x64\bin\surpac2.exe')
+    print(pid)

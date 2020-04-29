@@ -2,7 +2,7 @@ import yaml
 from PySide2.QtGui import QFont
 from PySide2.QtWidgets import QTreeWidgetItem, QTreeWidget
 
-from py_thread import TbcRunThread, PyRunThread, TclRunThread
+from py_surpac_communite import TbcRunThread, PyRunThread, TclRunThread
 
 
 class TreeWidget(QTreeWidget):
@@ -32,17 +32,17 @@ class TreeWidget(QTreeWidget):
         if (item.text(2)):
             if ('.tbc' in item.text(2)):
                 print('tbc script')
-                tbcThread = TbcRunThread(port=self.port, item=item)
+                tbcThread = TbcRunThread(port=self.port, item=item, config=self.config, logger=self.logger)
                 tbcThread.start()
                 raise ValueError("tbc进程正常终止")
 
             if ('.tcl' in item.text(2)):
-                tclThread = TclRunThread(port=self.port, item=item)
+                tclThread = TclRunThread(port=self.port, item=item, config=self.config, logger=self.logger)
                 tclThread.start()
                 raise ValueError("tcl进程正常终止")
 
             if ('.py' in item.text(2)):
-                pyThread = PyRunThread(port=self.port, item=item)
+                pyThread = PyRunThread(port=self.port, item=item, config=self.config, logger=self.logger)
                 pyThread.start()
                 raise ValueError("py进程正常终止")
 
