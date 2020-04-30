@@ -15,9 +15,9 @@ from py_config import ConfigFactory
 from py_logging import LoggerFactory
 
 
-class SurpacContainerWidget(QWidget):
+class Surpac():
     def __init__(self, config, logger):
-        super(SurpacContainerWidget, self).__init__()
+        # super(SurpacContainerWidget, self).__init__()
         self.logger = logger
         self.config = config
 
@@ -27,9 +27,6 @@ class SurpacContainerWidget(QWidget):
                                stdin=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True).pid
         self.pid = pid
         return pid
-
-    def rebuildSurpacWidget(self, cmd):
-        self.killProcess(pids=[self.pid])
 
     # 从指定pid获取窗口句柄（通过回调函数）
     def getHwndFromPid(self, pid):
@@ -72,23 +69,17 @@ class SurpacContainerWidget(QWidget):
 
     # 根据pid获取运行端口
     def getPortsFromPid(self, pid):
-        _result = subprocess.Popen("netstat -aon|findstr " + str(pid), shell=True, stdout=subprocess.PIPE,
-                                   stderr=subprocess.PIPE, stdin=subprocess.PIPE, close_fds=True)
-        _lines = _result.stdout.readlines()
-        ports = []
-        for port in _lines:
-            _port = str(port).replace(' ', '') \
-                .replace('.', '') \
-                .replace(':', '') \
-                .replace("b'", '') \
-                .replace("\\r\\n'", '') \
-                .replace('TCP0000', '') \
-                .replace(str(pid), '') \
-                .replace('00000LISTENING', '')
-            if len(_port) <= 10:
-                ports.append(_port)
-            self.ports = ports
-        return ports
+        io = subprocess.Popen("netstat -aon|findstr " + str(pid), shell=True, stdout=subprocess.PIPE,
+                                  stderr=subprocess.PIPE, stdin=subprocess.PIPE, close_fds=True)
+        lines = io.stdout.readlines()
+        self.ports = []
+        for line in lines:
+            if 'LISTENING' in str(line):
+                begin = str(line).index('0.0.0.0:') + 8
+                end = begin + 15
+                port = int(str(line)[begin:end].strip())
+                self.ports.append(port)
+        return self.ports
 
     # 关闭列出的所有进程id号的进程
     def killProcess(self, pids):
@@ -136,12 +127,3 @@ class SurpacContainerWidget(QWidget):
         return self.surpac_widget, self.surpac_ports, self.surpac_pid
 
 
-if __name__ == '__main__':
-    # 设置配置文件和日志
-    config = ConfigFactory(config='py_platform.ini').getConfig()
-    logger = LoggerFactory(config=config).getLogger()
-    surpac = SurpacContainerWidget(config=config, logger=logger)
-    pids = surpac.getPidsFromPName('Surpac')
-    surpac.killProcess(pids)
-    pid = surpac.startProcess(r'C:\Program Files\GEOVIA\Surpac\662_x64\x64\bin\surpac2.exe')
-    print(pid)

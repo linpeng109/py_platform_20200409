@@ -1,9 +1,9 @@
-from PySide2.QtCore import Slot
+from PySide2.QtCore import Slot, Signal
 from PySide2.QtWidgets import QWidget, QVBoxLayout, QPushButton, QHBoxLayout
 
 from py_choice_dialog import ChoiceDialog
 from py_shortcuts import ShortCuts
-from py_surpac_widget import SurpacContainerWidget
+from py_surpac import Surpac
 from py_tree_widget import TreeWidget
 
 
@@ -34,11 +34,3 @@ class ChoicesWidget(QWidget):
         h_layout.addWidget(language_choice_button)
 
         self.setLayout(h_layout)
-
-    def surpac_choice_callback_func(self, result):
-        self.logger.debug(result)
-        self.surpac_widget.build_surpac_widget(result)
-
-    def language_choice_callback_func(self, result):
-        self.logger.debug(result)
-        self.tree_widget.rebuildTreeWidget(surpac_scl_cfg=result, port=self.ports[0])

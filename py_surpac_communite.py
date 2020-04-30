@@ -1,11 +1,71 @@
 import importlib
 import threading
+from socket import socket, AF_INET, SOCK_STREAM
 
 from py_path import Path
 from py_socket import SurpacSocketClient
 
 
+# Surpac通讯处理
+class SurpacSocketClient:
+
+    def __init__(self, port: object, encode: object):
+        self.HOST = 'localhost'
+        self.BUFSIZ = 1024
+        self.PORT = port
+        self.ENCODE = encode
+        self.ADDR = (self.HOST, port)
+        self.tcpCliSock = socket(AF_INET, SOCK_STREAM)
+        self.tcpCliSock.connect(self.ADDR)
+
+    def sendMsg(self, msg):
+        self.tcpCliSock.sendall(msg.encode(self.ENCODE))
+        result = self.tcpCliSock.recv(self.BUFSIZ)
+        return result
+
+    def closeSocket(self):
+        self.tcpCliSock.close()
+
+
 class ChangeLanguageThread(threading.Thread):
+    changeLanguage_chinese_command = r'''
+        set env(SurpacDevInterface)  "Chinese"
+        set status [ SclFunction "MESSAGE OPTIONS" {
+          frm00207={
+            {
+              language="chinese"
+              log_msg="off"
+              dbg_msg="off"
+              info_msg="on"
+              warn_msg="on"
+              iwarning="0"
+              isevere="0"
+              buffer_size="1000"
+              beep_on_error="off"
+            }
+          }
+        }]        
+    '''
+
+    changeLanguage_english_command = r'''
+        set env(SurpacDevInterface)  "English"
+        set status [ SclFunction "MESSAGE OPTIONS" {
+          frm00207={
+            {
+              language="default"
+              log_msg="off"
+              dbg_msg="off"
+              info_msg="on"
+              warn_msg="on"
+              iwarning="0"
+              isevere="0"
+              buffer_size="1000"
+              beep_on_error="off"
+            }
+          }
+        }]        
+    '''
+
     def __init__(self, port, choice_language: str, config, logger):
         super(ChangeLanguageThread, self).__init__()
         self.port = port
@@ -14,47 +74,10 @@ class ChangeLanguageThread(threading.Thread):
         self.choice_language = choice_language
 
     def run(self) -> None:
-        changeLanguage_chinese_command = r'''
-            set env(SurpacDevInterface)  "Chinese"
-            set status [ SclFunction "MESSAGE OPTIONS" {
-              frm00207={
-                {
-                  language="chinese"
-                  log_msg="off"
-                  dbg_msg="off"
-                  info_msg="on"
-                  warn_msg="on"
-                  iwarning="0"
-                  isevere="0"
-                  buffer_size="1000"
-                  beep_on_error="off"
-                }
-              }
-            }]        
-        '''
-
-        changeLanguage_english_command = r'''
-            set env(SurpacDevInterface)  "English"
-            set status [ SclFunction "MESSAGE OPTIONS" {
-              frm00207={
-                {
-                  language="default"
-                  log_msg="off"
-                  dbg_msg="off"
-                  info_msg="on"
-                  warn_msg="on"
-                  iwarning="0"
-                  isevere="0"
-                  buffer_size="1000"
-                  beep_on_error="off"
-                }
-              }
-            }]        
-        '''
         if 'chinese' in self.choice_language:
-            changeLanguage_command = changeLanguage_chinese_command
+            changeLanguage_command = self.changeLanguage_chinese_command
         elif 'english' in self.choice_language:
-            changeLanguage_command = changeLanguage_english_command
+            changeLanguage_command = self.changeLanguage_english_command
         else:
             changeLanguage_command = ''
         surpac_socket = SurpacSocketClient(int(self.port), 'gbk')
