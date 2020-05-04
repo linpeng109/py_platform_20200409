@@ -7,6 +7,7 @@ import time
 import win32con
 import win32gui
 import win32process
+from PySide2.QtCore import Slot
 from PySide2.QtGui import QWindow
 from PySide2.QtWidgets import QWidget
 
@@ -118,8 +119,9 @@ class Surpac():
         return QWidget.createWindowContainer(native_wnd)
 
     # 生成surpac工作区widget
+    @Slot(str)
     def build_surpac_widget(self, cmd: str):
-        self.killProcess([self.pid])
+        # self.killProcess([self.pid])
         self.surpac_pid = self.startProcess(cmd)
         hwnd = self.getTheMainWindow(pid=self.surpac_pid, spTitle='Surpac')
         self.surpac_ports = self.getPortsFromPid(pid=self.surpac_pid)

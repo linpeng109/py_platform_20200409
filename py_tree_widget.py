@@ -1,9 +1,7 @@
 import yaml
-from PySide2.QtCore import Signal
+from PySide2.QtCore import Signal, Slot
 from PySide2.QtGui import QFont
 from PySide2.QtWidgets import QTreeWidgetItem, QTreeWidget
-
-from py_surpac_communite import TbcRunThread, PyRunThread, TclRunThread
 
 
 class TreeWidget(QTreeWidget):

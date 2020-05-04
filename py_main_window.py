@@ -46,14 +46,6 @@ class MainWindow(QMainWindow):
         # choices_wigdet
         self.choices_widget = ChoicesWidget(config=config, logger=logger, ports=self.surpac_ports)
 
-        # 选择语言信号与语言选择接收槽链接
-        # self.choices_widget.language_choice_dialog.choices_signal.connect(self.language_choices_listener)
-        self.choices_widget.language_choice_dialog.choices_signal.connect(self.tree_widget.treeWidget_reload2)
-
-        # Surpac版本选择信号与Surpac版本选择接收槽链接
-        # self.choices_widget.surpac_choice_widget_dialog.choices_signal.connect(self.surpac_choices_listener)
-        self.choices_widget.surpac_choice_widget_dialog.choices_signal.connect(self.surpac.build_surpac_widget)
-
         # tree_widget
         self.tree_widget = TreeWidget(config=config, logger=logger, port=self.surpac_ports[0])
 
@@ -83,13 +75,20 @@ class MainWindow(QMainWindow):
         # 在窗口中央显示tab
         self.setCentralWidget(tab_widget)
 
-    # 语言选择信号接收槽
+        # 选择语言信号与语言选择接收槽链接
+        self.choices_widget.language_choice_dialog.choices_signal.connect(self.language_choices_listener)
+        # self.choices_widget.language_choice_dialog.choices_signal.connect(self.tree_widget.treeWidget_load2)
+
+        # Surpac版本选择信号与Surpac版本选择接收槽链接
+        self.choices_widget.surpac_choice_widget_dialog.choices_signal.connect(self.surpac_choices_listener)
+
+    # # 语言选择信号接收槽
     @Slot(str)
     def language_choices_listener(self, result):
         self.logger.debug(result)
-        self.tree_widget.treeWidget_load(surpac_scl_cfg=result, port=self.surpac_ports[0])
+        self.tree_widget.treeWidget_load2(result)
 
-    # Surpac版本选择信号接收槽
+    # # Surpac版本选择信号接收槽
     @Slot(str)
     def surpac_choices_listener(self, result):
         self.surpac.killProcess([self.surpac_pid])
