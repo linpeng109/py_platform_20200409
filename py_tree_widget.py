@@ -18,10 +18,10 @@ class TreeWidget(QTreeWidget):
         self.logger = logger
         surpac_scl_cfg = self.config.get('surpac', 'surpac_scl_cfg')
         # self.treeWidget_load(surpac_scl_cfg=surpac_scl_cfg, port=port)
-        self.treeWidget_load2(surpac_scl_cfg=surpac_scl_cfg)
+        self.treeWidget_load(surpac_scl_cfg=surpac_scl_cfg)
 
     # 重构Tree组件
-    def treeWidget_load2(self, surpac_scl_cfg):
+    def treeWidget_load(self, surpac_scl_cfg):
         self.clear()
         self.treeWidget = QTreeWidgetItem(self)
         self.setColumnCount(1)
@@ -31,19 +31,6 @@ class TreeWidget(QTreeWidget):
         for item in menus:
             self.addTopLevelItem(item)
             self.setItemExpanded(item, True)
-
-    # 重构Tree组件
-    # def treeWidget_load(self, surpac_scl_cfg, port):
-    #     self.clear()
-    #     self.treeWidget = QTreeWidgetItem(self)
-    #     self.port = port
-    #     self.setColumnCount(1)
-    #     self.setHeaderHidden(True)
-    #     self.itemClicked.connect(self.__on_item_clicked2)
-    #     menus = self.__build_toplevel_menu(surpac_scl_cfg=surpac_scl_cfg)
-    #     for item in menus:
-    #         self.addTopLevelItem(item)
-    #         self.setItemExpanded(item, True)
 
     # 树形菜单单击处理
     def __on_item_clicked2(self, item):
@@ -57,25 +44,6 @@ class TreeWidget(QTreeWidget):
                 self.treeItem_py_clicked_signal.emit(msg)
             else:
                 self.treeItem_func_clicked_signal.emit(msg)
-
-    # 处理Tree单击触发
-    # def __on_item_clicked(self, item):
-    #     if (item.text(2)):
-    #         if ('.tbc' in item.text(2)):
-    #             print('tbc script')
-    #             tbcThread = TbcRunThread(port=self.port, item=item, config=self.config, logger=self.logger)
-    #             tbcThread.start()
-    #             raise ValueError("tbc进程正常终止")
-    #
-    #         if ('.tcl' in item.text(2)):
-    #             tclThread = TclRunThread(port=self.port, item=item, config=self.config, logger=self.logger)
-    #             tclThread.start()
-    #             raise ValueError("tcl进程正常终止")
-    #
-    #         if ('.py' in item.text(2)):
-    #             pyThread = PyRunThread(port=self.port, item=item, config=self.config, logger=self.logger)
-    #             pyThread.start()
-    #             raise ValueError("py进程正常终止")
 
     # 构建Tree组件
     def __build_toplevel_menu(self, surpac_scl_cfg: str):

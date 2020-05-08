@@ -3,7 +3,6 @@ import threading
 from socket import socket, AF_INET, SOCK_STREAM
 
 from py_path import Path
-from py_socket import SurpacSocketClient
 
 
 # Surpac通讯处理
@@ -26,8 +25,6 @@ class SurpacSocketClient:
     def closeSocket(self):
         self.tcpCliSock.close()
 
-
-class ChangeLanguageThread(threading.Thread):
     changeLanguage_chinese_command = r'''
         set env(SurpacDevInterface)  "Chinese"
         set status [ SclFunction "MESSAGE OPTIONS" {
@@ -66,14 +63,7 @@ class ChangeLanguageThread(threading.Thread):
         }]        
     '''
 
-    def __init__(self, port, choice_language: str, config, logger):
-        super(ChangeLanguageThread, self).__init__()
-        self.port = port
-        self.config = config
-        self.logger = logger
-        self.choice_language = choice_language
-
-    def run(self) -> None:
+    def work(self) -> None:
         if 'chinese' in self.choice_language:
             changeLanguage_command = self.changeLanguage_chinese_command
         elif 'english' in self.choice_language:
@@ -142,6 +132,27 @@ class PyRunThread(threading.Thread):
     def run(self):
         module_name = 'sclScript.%s' % str(self.item.text(2)).split('.')[0]
         # module_name = '%s' % str(self.item.text(2)).split('.')[0]
+        self.logger.debug('module_name=%s' % module_name)
+        metaClass = importlib.import_module(Path.resource_path(module_name))
+        sclCommand = metaClass.message
+        surpac_socket = SurpacSocketClient(int(self.port), 'gbk')
+        message = 'RCTL\n' + 'TCLSCRIPTBEGIN\n' + sclCommand + ' TCLSCRIPTEND\n'
+        result = surpac_socket.sendMsg(message)
+        self.logger.debug('result=%s' % result)
+        surpac_socket.closeSocket()
+        return
+
+
+class InitRunThread(threading.Thread):
+    def __init__(self, port, item, config, logger):
+        super(InitRunThread, self).__init__()
+        self.item = item
+        self.port = port
+        self.config = config
+        self.logger = logger
+
+    def run(self):
+        module_name = 'sclScript.%s' % str(self.item.text(2)).split('.')[0]
         self.logger.debug('module_name=%s' % module_name)
         metaClass = importlib.import_module(Path.resource_path(module_name))
         sclCommand = metaClass.message

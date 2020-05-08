@@ -11,14 +11,10 @@ from PySide2.QtCore import Slot
 from PySide2.QtGui import QWindow
 from PySide2.QtWidgets import QWidget
 
+
 # 生成surpac工作区widget
-from py_config import ConfigFactory
-from py_logging import LoggerFactory
-
-
 class Surpac():
     def __init__(self, config, logger):
-        # super(SurpacContainerWidget, self).__init__()
         self.logger = logger
         self.config = config
 
@@ -71,7 +67,7 @@ class Surpac():
     # 根据pid获取运行端口
     def getPortsFromPid(self, pid):
         io = subprocess.Popen("netstat -aon|findstr " + str(pid), shell=True, stdout=subprocess.PIPE,
-                                  stderr=subprocess.PIPE, stdin=subprocess.PIPE, close_fds=True)
+                              stderr=subprocess.PIPE, stdin=subprocess.PIPE, close_fds=True)
         lines = io.stdout.readlines()
         self.ports = []
         for line in lines:
@@ -127,5 +123,3 @@ class Surpac():
         self.surpac_ports = self.getPortsFromPid(pid=self.surpac_pid)
         self.surpac_widget = self.convertWndToWidget(hwnd=hwnd)
         return self.surpac_widget, self.surpac_ports, self.surpac_pid
-
-

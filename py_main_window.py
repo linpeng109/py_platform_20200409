@@ -75,6 +75,7 @@ class MainWindow(QMainWindow):
         # 在窗口中央显示tab
         self.setCentralWidget(tab_widget)
 
+        # ============================================================================================
         # 选择语言信号与语言选择接收槽链接
         self.choices_widget.language_choice_dialog.choices_signal.connect(self.language_choices_listener)
         # self.choices_widget.language_choice_dialog.choices_signal.connect(self.tree_widget.treeWidget_load2)
@@ -82,11 +83,11 @@ class MainWindow(QMainWindow):
         # Surpac版本选择信号与Surpac版本选择接收槽链接
         self.choices_widget.surpac_choice_widget_dialog.choices_signal.connect(self.surpac_choices_listener)
 
-    # # 语言选择信号接收槽
+    # 语言选择信号接收槽
     @Slot(str)
     def language_choices_listener(self, result):
         self.logger.debug(result)
-        self.tree_widget.treeWidget_load2(result)
+        self.tree_widget.treeWidget_load(result)
 
     # # Surpac版本选择信号接收槽
     @Slot(str)
