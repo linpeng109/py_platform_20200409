@@ -32,12 +32,20 @@ class Path():
             print('The Path is not exist. Created (%s).' % outputPath)
 
     @classmethod
-    def resource_path(self,relative_path: str):
+    def resource_path(self, relative_path: str):
         if getattr(sys, 'frozen', False):
             base_path = sys._MEIPASS
         else:
             base_path = os.path.abspath(".")
         return os.path.join(base_path, relative_path)
+
+    @classmethod
+    def get_base_path(self):
+        return os.path.abspath('.')
+
+    @classmethod
+    def join(self, p1, p2):
+        return os.path.join(p1, p2)
 
 
 if __name__ == '__main__':
@@ -46,4 +54,8 @@ if __name__ == '__main__':
     # print(result1)
     # result = filenameIsContains(fullname, ['AFS', 'xlsx'])
     # print(result)
-    Path.outpathIsExist('e:/watchdogdir/aass')
+    # Path.outpathIsExist('e:/watchdogdir/aass')
+    path = Path()
+    p1 = path.get_base_path()
+    p2 = 'sclScript'
+    print(path.join(p1,p2))

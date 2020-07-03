@@ -115,7 +115,6 @@ class Surpac():
         return QWidget.createWindowContainer(native_wnd)
 
     # 生成surpac工作区widget
-    @Slot(str)
     def build_surpac_widget(self, cmd: str):
         # self.killProcess([self.pid])
         self.surpac_pid = self.startProcess(cmd)

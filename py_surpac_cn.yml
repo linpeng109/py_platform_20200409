@@ -3,7 +3,7 @@ root:
   descript: '矿山企业三维建模流程（建模大师）'
   children:
     child_0:
-      text: '测试1'
+      text: '测试'
       descript: '测试菜单命令'
       children:
         child_0_1:
@@ -13,8 +13,20 @@ root:
         child_0_2:
           text: '测试执行tcl脚本'
           descript: '测试执行tcl脚本'
-          scl: 'test.tcl'
+          scl: 'test_about.tcl'
         child_0_3:
           text: '执行python脚本'
           descript: '执行python脚本'
           scl: 'test_about.py'
+        child_0_4:
+          text: '执行surpac初始化脚本'
+          descript: '执行surpac初始化脚本'
+          scl: 'test_init.py'
+        child_0_5:
+          text: '执行surpac英文版本脚本'
+          descript: '执行surpac英文版本脚本'
+          scl: 'test_language_en.tcl'
+        child_0_6:
+          text: '执行surpac中文版本脚本'
+          descript: '执行surpac中文版本脚本'
+          scl: 'test_language_cn.tcl'

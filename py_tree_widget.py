@@ -34,6 +34,14 @@ class TreeWidget(QTreeWidget):
 
     # 树形菜单单击处理
     def __on_item_clicked2(self, item):
+        #
+        print('==========插入读取软件锁代码============')
+
+
+
+
+
+        #
         msg = item.text(2)
         if (msg):
             if '.tbc' in msg:

@@ -2,10 +2,10 @@ import multiprocessing
 import os
 import sys
 
+from py_config import ConfigFactory
 from PySide2.QtGui import QIcon
 from PySide2.QtWidgets import QApplication
 
-from py_config import ConfigFactory
 from py_logging import LoggerFactory
 from py_main_window import MainWindow
 from py_path import Path

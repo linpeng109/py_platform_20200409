@@ -1,10 +1,7 @@
-from PySide2.QtCore import Slot, Signal
-from PySide2.QtWidgets import QWidget, QVBoxLayout, QPushButton, QHBoxLayout
+from PySide2.QtWidgets import QWidget, QPushButton, QHBoxLayout
 
 from py_choice_dialog import ChoiceDialog
 from py_shortcuts import ShortCuts
-from py_surpac import Surpac
-from py_tree_widget import TreeWidget
 
 
 class ChoicesWidget(QWidget):
