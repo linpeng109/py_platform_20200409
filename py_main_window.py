@@ -99,8 +99,7 @@ class MainWindow(QMainWindow):
         self.tree_widget.treeWidget_load(result)
         surpac_socket_client = SurpacSocketClient(logger=self.logger, config=self.config,
                                                   port=self.surpac_ports[0])
-        m
-        surpac_socket_client.change_language_script_worker(result)
+        # surpac_socket_client.change_language_script_worker(result)
         surpac_socket_client.closeSocket()
 
     # Surpac版本选择信号接收槽

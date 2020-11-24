@@ -7,7 +7,6 @@ import time
 import win32con
 import win32gui
 import win32process
-from PySide2.QtCore import Slot
 from PySide2.QtGui import QWindow
 from PySide2.QtWidgets import QWidget
 
