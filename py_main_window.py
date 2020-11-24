@@ -18,8 +18,8 @@ class MainWindow(QMainWindow):
         super(MainWindow, self).__init__()
         self.config = config
         self.logger = logger
-        self.setWindowTitle(config.get('surpac', 'title'))
-        self.resize(config.getint('surpac', 'width'), config.getint('surpac', 'height'))
+        self.setWindowTitle(config.get('default', 'title'))
+        self.resize(config.getint('default', 'width'), config.getint('default', 'height'))
 
         # tab_widget
         tab_widget = TabWidget()
@@ -81,7 +81,8 @@ class MainWindow(QMainWindow):
         tab_widget.tabBar().setTabButton(1, QTabBar.RightSide, None)
 
         # 指定当前tab
-        tab_widget.setCurrentIndex(1)
+        index_tab = config.getint('default', 'index_tab')
+        tab_widget.setCurrentIndex(index_tab)
 
         # 在窗口中央显示tab
         self.setCentralWidget(tab_widget)
