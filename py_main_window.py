@@ -3,6 +3,7 @@ from PySide2.QtWidgets import *
 
 from py_choices_widget import ChoicesWidget
 from py_communite import SurpacSocketClient, Tbc_script_thread, Tcl_script_thread, Py_script_thread, Fun_script_worker
+from py_minesched import Minesched
 from py_shortcuts import ShortCuts
 from py_surpac import Surpac
 from py_tab_widget import TabWidget
@@ -23,10 +24,15 @@ class MainWindow(QMainWindow):
         # tab_widget
         tab_widget = TabWidget()
 
-        # web_widget
-        web_widget = WebEngineView(config=config, logger=logger, tabWidget=tab_widget)
-        web_widget.load(QUrl(config.get('surpac', 'url')))
-        tab_widget.addTabItem(widget=web_widget, item_title='首页')
+        # index_widget
+        index_widget = WebEngineView(config=config, logger=logger, tabWidget=tab_widget)
+        index_widget.load(QUrl(config.get('index', 'url')))
+        tab_widget.addTabItem(widget=index_widget, item_title='紫金矿业')
+
+        # treejs_widget
+        treejs_widget = WebEngineView(config=config, logger=logger, tabWidget=tab_widget)
+        treejs_widget.load(QUrl(config.get('threejs', 'url')))
+        tab_widget.addTabItem(widget=treejs_widget, item_title='三维模型')
 
         # surpac_widget
         self.surpac = Surpac(config=config, logger=logger)
@@ -40,13 +46,13 @@ class MainWindow(QMainWindow):
         # 从快捷方式中获取所有已经安装的surpac的启动命令
         short_cuts = ShortCuts(config=config, logger=logger)
         surpac_cmd_list = short_cuts.getSurpacCmdList()
-
         self.surpac_widget, self.surpac_ports, self.surpac_pid = self.surpac.build_surpac_widget(surpac_cmd_list[0])
 
-        # self.surpac_pid = self.surpac.startProcess(surpac_cmd_list[0])
-        # surpac_hwnd = self.surpac.getTheMainWindow(pid=self.surpac_pid, spTitle='Surpac')
-        # self.surpac_ports = self.surpac.getPortsFromPid(self.surpac_pid)
-        # self.surpac_widget = self.surpac.convertWndToWidget(surpac_hwnd)
+        # minesched_widget
+        self.minesched = Minesched(config=config, logger=logger)
+        minesched_cmd_list = short_cuts.getMineSchedCmdList()
+        self.minesched_widget, self.minesched_pid = self.minesched.build_minesched_widget(minesched_cmd_list[0])
+        tab_widget.addTabItem(widget=self.minesched_widget, item_title='MineSched')
 
         # choices_wigdet
         self.choices_widget = ChoicesWidget(config=config, logger=logger, ports=self.surpac_ports)
@@ -75,7 +81,7 @@ class MainWindow(QMainWindow):
         tab_widget.tabBar().setTabButton(1, QTabBar.RightSide, None)
 
         # 指定当前tab
-        tab_widget.setCurrentIndex(0)
+        tab_widget.setCurrentIndex(1)
 
         # 在窗口中央显示tab
         self.setCentralWidget(tab_widget)
