@@ -2,13 +2,15 @@ import multiprocessing
 import os
 import sys
 
-from py_config import ConfigFactory
 from PySide2.QtGui import QIcon
 from PySide2.QtWidgets import QApplication
 
+from py_config import ConfigFactory
 from py_logging import LoggerFactory
 from py_main_window import MainWindow
 from py_path import Path
+
+# 必须导入win32timezone否则pyinstaller后，运行报错
 
 if __name__ == '__main__':
     # win环境编译时应用，解决win环境mutilprocess的fork兼容问题

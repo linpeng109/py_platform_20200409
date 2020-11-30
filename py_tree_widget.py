@@ -1,5 +1,8 @@
+import os
+import sys
+
 import yaml
-from PySide2.QtCore import Signal, Slot
+from PySide2.QtCore import Signal
 from PySide2.QtGui import QFont
 from PySide2.QtWidgets import QTreeWidgetItem, QTreeWidget
 
@@ -26,20 +29,23 @@ class TreeWidget(QTreeWidget):
         self.treeWidget = QTreeWidgetItem(self)
         self.setColumnCount(1)
         self.setHeaderHidden(True)
-        self.itemClicked.connect(self.__on_item_clicked2)
+        self.itemClicked.connect(self.__on_item_clicked)
+        # 加入相对路径，处理pyinstaller打包后yml导入错误问题
+        if getattr(sys, 'frozen', False):
+            base_path = sys._MEIPASS
+        else:
+            base_path = os.path.abspath(".")
+        surpac_scl_cfg = os.path.join(base_path, surpac_scl_cfg)
+        # 加入menu菜单配置yml文件
         menus = self.__build_toplevel_menu(surpac_scl_cfg=surpac_scl_cfg)
         for item in menus:
             self.addTopLevelItem(item)
             self.setItemExpanded(item, True)
 
     # 树形菜单单击处理
-    def __on_item_clicked2(self, item):
+    def __on_item_clicked(self, item):
         #
         print('==========插入读取软件锁代码============')
-
-
-
-
 
         #
         msg = item.text(2)
