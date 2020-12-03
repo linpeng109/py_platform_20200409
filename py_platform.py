@@ -13,12 +13,15 @@ from py_path import Path
 # 必须导入win32timezone否则pyinstaller后，运行报错
 
 if __name__ == '__main__':
+
     # win环境编译时应用，解决win环境mutilprocess的fork兼容问题
     if os.sys.platform.startswith('win'):
         multiprocessing.freeze_support()
+
     # 设置配置文件和日志
     config = ConfigFactory(config='py_platform.ini').getConfig()
     logger = LoggerFactory(config=config).getLogger()
+
     # 启动应用
     app = QApplication(sys.argv)
     icon = QIcon(Path.resource_path('sinomine_logo.ico'))
@@ -28,5 +31,6 @@ if __name__ == '__main__':
     mainWindow = MainWindow(config=config, logger=logger)
     mainWindow.setWindowIcon(icon)
     mainWindow.showMaximized()
+
     # 结束应用
     sys.exit(app.exec_())

@@ -30,9 +30,9 @@ class MainWindow(QMainWindow):
         tab_widget.addTabItem(widget=index_widget, item_title='紫金矿业')
 
         # treejs_widget
-        treejs_widget = WebEngineView(config=config, logger=logger, tabWidget=tab_widget)
-        treejs_widget.load(QUrl(config.get('threejs', 'url')))
-        tab_widget.addTabItem(widget=treejs_widget, item_title='三维模型')
+        # treejs_widget = WebEngineView(config=config, logger=logger, tabWidget=tab_widget)
+        # treejs_widget.load(QUrl(config.get('threejs', 'url')))
+        # tab_widget.addTabItem(widget=treejs_widget, item_title='三维模型')
 
         # surpac_widget
         self.surpac = Surpac(config=config, logger=logger)
@@ -49,23 +49,33 @@ class MainWindow(QMainWindow):
         self.surpac_widget, self.surpac_ports, self.surpac_pid = self.surpac.build_surpac_widget(surpac_cmd_list[0])
 
         # minesched_widget
-        self.minesched = Minesched(config=config, logger=logger)
-        minesched_cmd_list = short_cuts.getMineSchedCmdList()
-        self.minesched_widget, self.minesched_pid = self.minesched.build_minesched_widget(minesched_cmd_list[0])
-        tab_widget.addTabItem(widget=self.minesched_widget, item_title='MineSched')
-
-        # choices_wigdet
-        self.choices_widget = ChoicesWidget(config=config, logger=logger, ports=self.surpac_ports)
-
-        # tree_widget
-        self.tree_widget = TreeWidget(config=config, logger=logger, port=self.surpac_ports[0])
+        # self.minesched = Minesched(config=config, logger=logger)
+        # minesched_cmd_list = short_cuts.getMineSchedCmdList()
+        # self.minesched_widget, self.minesched_pid = self.minesched.build_minesched_widget(minesched_cmd_list[0])
+        # tab_widget.addTabItem(widget=self.minesched_widget, item_title='MineSched')
 
         # right_widget
         right_widget = QWidget()
         right_widget_layout = QVBoxLayout()
-        right_widget_layout.addWidget(self.choices_widget)
+
+        # choices_wigdet设置
+        # self.choices_widget = ChoicesWidget(config=config, logger=logger, ports=self.surpac_ports)
+        # right_widget_layout.addWidget(self.choices_widget)
+        # 选择语言信号与语言选择接收槽链接
+        # self.choices_widget.language_choice_dialog.choices_signal.connect(self.change_language_listener)
+        # Surpac版本选择信号与Surpac版本选择接收槽链接
+        # self.choices_widget.surpac_choice_widget_dialog.choices_signal.connect(self.change_surpac_listener)
+
+
+        # tree_widget设置
+        self.tree_widget = TreeWidget(config=config, logger=logger, port=self.surpac_ports[0])
         right_widget_layout.addWidget(self.tree_widget)
         right_widget.setLayout(right_widget_layout)
+        # tree_widget中向surpac发送指令
+        self.tree_widget.treeItem_func_clicked_signal.connect(self.treeItem_func_clicked_listener)
+        self.tree_widget.treeItem_tcl_clicked_signal.connect(self.treeItem_tcl_clicked_listener)
+        self.tree_widget.treeItem_tbc_clicked_signal.connect(self.treeItem_tbc_clicked_listener)
+        self.tree_widget.treeItem_py_clicked_signal.connect(self.treeItem_py_clicked_listener)
 
         # work_widget
         self.work_widget = QSplitter()
@@ -87,17 +97,7 @@ class MainWindow(QMainWindow):
         # 在窗口中央显示tab
         self.setCentralWidget(tab_widget)
 
-        # 选择语言信号与语言选择接收槽链接
-        self.choices_widget.language_choice_dialog.choices_signal.connect(self.change_language_listener)
 
-        # Surpac版本选择信号与Surpac版本选择接收槽链接
-        self.choices_widget.surpac_choice_widget_dialog.choices_signal.connect(self.change_surpac_listener)
-
-        # 向surpac发送指令
-        self.tree_widget.treeItem_func_clicked_signal.connect(self.treeItem_func_clicked_listener)
-        self.tree_widget.treeItem_tcl_clicked_signal.connect(self.treeItem_tcl_clicked_listener)
-        self.tree_widget.treeItem_tbc_clicked_signal.connect(self.treeItem_tbc_clicked_listener)
-        self.tree_widget.treeItem_py_clicked_signal.connect(self.treeItem_py_clicked_listener)
 
     # 语言选择信号接收槽
     @Slot(str)
