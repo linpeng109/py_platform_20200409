@@ -1,9 +1,8 @@
 from PySide2.QtCore import QUrl, Qt, Slot
 from PySide2.QtWidgets import *
 
-from py_choices_widget import ChoicesWidget
+from py_choice_dialog import ChoiceDialog
 from py_communite import SurpacSocketClient, Tbc_script_thread, Tcl_script_thread, Py_script_thread, Fun_script_worker
-from py_minesched import Minesched
 from py_shortcuts import ShortCuts
 from py_surpac import Surpac
 from py_tab_widget import TabWidget
@@ -24,37 +23,39 @@ class MainWindow(QMainWindow):
         # tab_widget
         tab_widget = TabWidget()
 
-        # index_widget
+        # index_widget配置
         index_widget = WebEngineView(config=config, logger=logger, tabWidget=tab_widget)
         index_widget.load(QUrl(config.get('index', 'url')))
         tab_widget.addTabItem(widget=index_widget, item_title='紫金矿业')
 
-        # treejs_widget
+        # treejs_widget配置
         # treejs_widget = WebEngineView(config=config, logger=logger, tabWidget=tab_widget)
         # treejs_widget.load(QUrl(config.get('threejs', 'url')))
         # tab_widget.addTabItem(widget=treejs_widget, item_title='三维模型')
 
-        # surpac_widget
+        # surpac_widget配置
         self.surpac = Surpac(config=config, logger=logger)
         # 销毁所有surpac2名称的进程
-        if (config.get('surpac', 'kill_other_surpac_process')):
+        if (config.get('surpac', 'surpac_kill_other_process')):
             pids = self.surpac.getPidsFromPName('surpac2')
             self.surpac.killProcess(pids)
-        else:
-            pass
+        # else:
+        #     pass
 
         # 从快捷方式中获取所有已经安装的surpac的启动命令
         short_cuts = ShortCuts(config=config, logger=logger)
-        surpac_cmd_list = short_cuts.getSurpacCmdList()
-        self.surpac_widget, self.surpac_ports, self.surpac_pid = self.surpac.build_surpac_widget(surpac_cmd_list[0])
+        self.surpac_cmd_list = short_cuts.getSurpacCmdList()
+        # self.choiceDialog = ChoiceDialog(title='请选择Surpac版本', choices=self.surpac_cmd_list)
+        self.surpac_widget, self.surpac_ports, self.surpac_pid = \
+            self.surpac.build_surpac_widget(self.surpac_cmd_list[0])
 
-        # minesched_widget
+        # minesched_widget页签配置
         # self.minesched = Minesched(config=config, logger=logger)
         # minesched_cmd_list = short_cuts.getMineSchedCmdList()
         # self.minesched_widget, self.minesched_pid = self.minesched.build_minesched_widget(minesched_cmd_list[0])
         # tab_widget.addTabItem(widget=self.minesched_widget, item_title='MineSched')
 
-        # right_widget
+        # right_widget配置
         right_widget = QWidget()
         right_widget_layout = QVBoxLayout()
 
@@ -66,11 +67,11 @@ class MainWindow(QMainWindow):
         # Surpac版本选择信号与Surpac版本选择接收槽链接
         # self.choices_widget.surpac_choice_widget_dialog.choices_signal.connect(self.change_surpac_listener)
 
-
         # tree_widget设置
         self.tree_widget = TreeWidget(config=config, logger=logger, port=self.surpac_ports[0])
         right_widget_layout.addWidget(self.tree_widget)
         right_widget.setLayout(right_widget_layout)
+
         # tree_widget中向surpac发送指令
         self.tree_widget.treeItem_func_clicked_signal.connect(self.treeItem_func_clicked_listener)
         self.tree_widget.treeItem_tcl_clicked_signal.connect(self.treeItem_tcl_clicked_listener)
@@ -97,7 +98,9 @@ class MainWindow(QMainWindow):
         # 在窗口中央显示tab
         self.setCentralWidget(tab_widget)
 
-
+        # 弹出窗口
+        self.choiceDialog = ChoiceDialog(title="请选择surpac版本", choices=self.surpac_cmd_list)
+        self.choiceDialog.show()
 
     # 语言选择信号接收槽
     @Slot(str)
@@ -106,7 +109,7 @@ class MainWindow(QMainWindow):
         self.tree_widget.treeWidget_load(result)
         surpac_socket_client = SurpacSocketClient(logger=self.logger, config=self.config,
                                                   port=self.surpac_ports[0])
-        # surpac_socket_client.change_language_script_worker(result)
+        # surpac_socket_client.(result)
         surpac_socket_client.closeSocket()
 
     # Surpac版本选择信号接收槽

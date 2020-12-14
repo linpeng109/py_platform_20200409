@@ -12,6 +12,9 @@ from PySide2.QtWidgets import QWidget
 
 
 # 生成surpac工作区widget
+from py_path import Path
+
+
 class Surpac():
     def __init__(self, config, logger):
         self.logger = logger
@@ -112,6 +115,20 @@ class Surpac():
     def convertWndToWidget(self, hwnd):
         native_wnd = QWindow.fromWinId(hwnd)
         return QWidget.createWindowContainer(native_wnd)
+
+    # 获取surpac的安装路径列表（surpac可以安装多个版本）
+    def getSurpacCmdList(self):
+        surpac_cmd_list = []
+        lnk_list = os.listdir(self.PROGRAM_DATA_PATH)
+        for lnk in lnk_list:
+            lnk_file = os.path.join(self.PROGRAM_DATA_PATH, lnk)
+            if Path.filenameIsContains(lnk_file, 'surpac'):
+                result = self.resolve_shortcut(lnk_file)
+                if '_x64' in result:
+                    result = result.replace('Program Files (x86)', 'Program Files')
+                surpac_cmd_list.append(result)
+        return surpac_cmd_list
+
 
     # 生成surpac工作区widget
     def build_surpac_widget(self, cmd: str):

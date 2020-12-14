@@ -1,10 +1,9 @@
-import os
-import sys
-
 import yaml
 from PySide2.QtCore import Signal
 from PySide2.QtGui import QFont
 from PySide2.QtWidgets import QTreeWidgetItem, QTreeWidget
+
+from py_path import Path
 
 
 class TreeWidget(QTreeWidget):
@@ -30,14 +29,11 @@ class TreeWidget(QTreeWidget):
         self.setColumnCount(1)
         self.setHeaderHidden(True)
         self.itemClicked.connect(self.__on_item_clicked)
+
         # 加入相对路径，处理pyinstaller打包后yml导入错误问题
-        if getattr(sys, 'frozen', False):
-            base_path = sys._MEIPASS
-        else:
-            base_path = os.path.abspath(".")
-        surpac_scl_cfg = os.path.join(base_path, surpac_scl_cfg)
+        self.scl_path = Path.resource_path(surpac_scl_cfg)
         # 加入menu菜单配置yml文件
-        menus = self.__build_toplevel_menu(surpac_scl_cfg=surpac_scl_cfg)
+        menus = self.build_toplevel_menu(surpac_scl_cfg=self.scl_path)
         for item in menus:
             self.addTopLevelItem(item)
             self.setItemExpanded(item, True)
@@ -60,12 +56,12 @@ class TreeWidget(QTreeWidget):
                 self.treeItem_func_clicked_signal.emit(msg)
 
     # 构建Tree组件
-    def __build_toplevel_menu(self, surpac_scl_cfg: str):
+    def build_toplevel_menu(self, surpac_scl_cfg: str):
         # Tree递归构建
-        def __build_menu_by_recursive(root: QTreeWidgetItem, menu_dict: dict, expand: bool):
+        def build_menu_by_recursive(root: QTreeWidgetItem, menu_dict: dict):
             for key in menu_dict:
                 item = QTreeWidgetItem()
-                # item.setExpanded(expand)
+
                 item_font = QFont()
                 item_font.setPointSize(self.config.getint('surpac', 'item_font_size'))
                 try:
@@ -86,9 +82,17 @@ class TreeWidget(QTreeWidget):
                     pass
                 try:
                     children = menu_dict[key]['children']
-                    __build_menu_by_recursive(item, children, True)
+                    build_menu_by_recursive(item, children)
                 except KeyError:
                     pass
+                try:
+                    expanded = menu_dict[key]['expanded']
+                    item.setExpanded(expanded)
+                    print(item.text(0))
+                    print(item.isExpanded())
+                except KeyError:
+                    pass
+
                 root.addChild(item)
 
         surpac_scl_encoding = self.config.get('surpac', 'surpac_scl_encoding')
@@ -99,25 +103,37 @@ class TreeWidget(QTreeWidget):
                 menu_toplevel_item = QTreeWidgetItem()
                 menu_toplevel_item_font = QFont()
                 menu_toplevel_item_font.setPointSize(self.config.getint('surpac', 'root_font_size'))
+
                 try:
                     text = str(menu_dict[key]['text'])
                     menu_toplevel_item.setText(0, text)
                     menu_toplevel_item.setFont(0, menu_toplevel_item_font)
                 except KeyError:
                     pass
+
                 try:
                     descript = str(menu_dict[key]['descript'])
                     menu_toplevel_item.setToolTip(0, descript)
                 except KeyError:
                     pass
+
                 try:
                     scl = str(menu_dict[key]['scl'])
                     menu_toplevel_item.setText(2, scl)
                 except KeyError:
                     pass
+
+                try:
+                    expanded = menu_dict[key]['expanded']
+                    menu_toplevel_item.setExpanded(expanded)
+                    print("==============================")
+                    print(menu_toplevel_item.isExpanded())
+                except KeyError:
+                    pass
+
                 try:
                     children = menu_dict[key]['children']
-                    __build_menu_by_recursive(menu_toplevel_item, children, True)
+                    build_menu_by_recursive(menu_toplevel_item, children)
                 except KeyError:
                     pass
 
