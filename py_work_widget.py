@@ -1,10 +1,10 @@
 from PySide2.QtCore import QUrl, Qt, Slot
 from PySide2.QtWidgets import *
 
-from py_choice_dialog import ChoiceDialog
+from py_choice_surpac_dialog import ChoiceSurpacDialog
 from py_communite import SurpacSocketClient, Tbc_script_thread, Tcl_script_thread, Py_script_thread, Fun_script_worker
 from py_shortcuts import ShortCuts
-from py_surpac import Surpac
+from py_surpac_widget import SurpacWidget
 from py_tab_widget import TabWidget
 from py_tree_widget import TreeWidget
 from py_web_widget import WebEngineView
@@ -39,6 +39,11 @@ class Work_Widget(QSplitter):
         # 在工作区中加入surpac和right组件
         self.addWidget(self.surpac_widget)
         self.addWidget(right_widget)
+
+    # 获取surpac配置地址
+    def check_surpac_localtion_config(self):
+        surpac_localtion=self.config.get
+
 
     # 语言选择信号接收槽
     @Slot(str)

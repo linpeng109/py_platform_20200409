@@ -10,12 +10,12 @@ import win32process
 from PySide2.QtGui import QWindow
 from PySide2.QtWidgets import QWidget
 
-# 生成minesched工作区widget
-from py_config import ConfigFactory
-from py_logging import LoggerFactory
+
+# 生成surpac工作区widget
+from py_path import Path
 
 
-class Minesched():
+class SurpacWidget():
     def __init__(self, config, logger):
         self.logger = logger
         self.config = config
@@ -116,26 +116,25 @@ class Minesched():
         native_wnd = QWindow.fromWinId(hwnd)
         return QWidget.createWindowContainer(native_wnd)
 
+    # 获取surpac的安装路径列表（surpac可以安装多个版本）
+    def getSurpacCmdList(self):
+        surpac_cmd_list = []
+        lnk_list = os.listdir(self.PROGRAM_DATA_PATH)
+        for lnk in lnk_list:
+            lnk_file = os.path.join(self.PROGRAM_DATA_PATH, lnk)
+            if Path.filenameIsContains(lnk_file, 'surpac'):
+                result = self.resolve_shortcut(lnk_file)
+                if '_x64' in result:
+                    result = result.replace('Program Files (x86)', 'Program Files')
+                surpac_cmd_list.append(result)
+        return surpac_cmd_list
+
+
     # 生成surpac工作区widget
-    def build_minesched_widget(self, cmd: str):
+    def build_surpac_widget(self, cmd: str):
         # self.killProcess([self.pid])
-        self.minesched_pid = self.startProcess(cmd)
-        hwnd = self.getTheMainWindow(pid=self.minesched_pid, spTitle='MineSched')
-        # self.surpac_ports = self.getPortsFromPid(pid=self.minesched_pid)
-        self.minesched_widget = self.convertWndToWidget(hwnd=hwnd)
-        return self.minesched_widget, self.minesched_pid
-
-
-if __name__ == '__main__':
-    # 设置配置文件和日志
-    config = ConfigFactory(config='py_platform.ini').getConfig()
-    logger = LoggerFactory(config=config).getLogger()
-
-    minesched = Minesched(config=config, logger=logger)
-    minesched_pid = minesched.startProcess(
-        cmd='C:/Program Files/Dassault Systemes/GEOVIA MineSched/9.2.0/MineSched.exe')
-    logger.debug(minesched_pid)
-    minesched_hwnd = minesched.getTheMainWindow(pid=minesched_pid, spTitle='MineSched')
-    logger.debug(minesched_hwnd)
-    minesched_widget = minesched.convertWndToWidget(hwnd=minesched_hwnd)
-    logger.debug(minesched_widget.__class__)
+        self.surpac_pid = self.startProcess(cmd)
+        hwnd = self.getTheMainWindow(pid=self.surpac_pid, spTitle='Surpac')
+        self.surpac_ports = self.getPortsFromPid(pid=self.surpac_pid)
+        self.surpac_widget = self.convertWndToWidget(hwnd=hwnd)
+        return self.surpac_widget, self.surpac_ports, self.surpac_pid

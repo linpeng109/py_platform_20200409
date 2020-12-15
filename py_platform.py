@@ -17,7 +17,7 @@ if __name__ == '__main__':
         multiprocessing.freeze_support()
 
     # 设置配置文件和日志
-    config = ConfigFactory(config='py_platform.ini').getConfig()
+    config = ConfigFactory(config_file='py_platform.ini').getConfig()
     logger = LoggerFactory(config=config).getLogger()
 
     # 启动应用

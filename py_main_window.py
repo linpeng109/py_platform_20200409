@@ -1,10 +1,10 @@
 from PySide2.QtCore import QUrl, Qt, Slot
 from PySide2.QtWidgets import *
 
-from py_choice_dialog import ChoiceDialog
+from py_choice_surpac_dialog import ChoiceSurpacDialog
 from py_communite import SurpacSocketClient, Tbc_script_thread, Tcl_script_thread, Py_script_thread, Fun_script_worker
 from py_shortcuts import ShortCuts
-from py_surpac import Surpac
+from py_surpac_widget import SurpacWidget
 from py_tab_widget import TabWidget
 from py_tree_widget import TreeWidget
 from py_web_widget import WebEngineView
@@ -34,7 +34,7 @@ class MainWindow(QMainWindow):
         # tab_widget.addTabItem(widget=treejs_widget, item_title='三维模型')
 
         # surpac_widget配置
-        self.surpac = Surpac(config=config, logger=logger)
+        self.surpac = SurpacWidget(config=config, logger=logger)
         # 销毁所有surpac2名称的进程
         if (config.get('surpac', 'surpac_kill_other_process')):
             pids = self.surpac.getPidsFromPName('surpac2')
@@ -99,8 +99,8 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(tab_widget)
 
         # 弹出窗口
-        self.choiceDialog = ChoiceDialog(title="请选择surpac版本", choices=self.surpac_cmd_list)
-        self.choiceDialog.show()
+        self.choiceSurpacDialog = ChoiceSurpacDialog(title="请选择surpac版本", surpacs=self.surpac_cmd_list)
+        self.choiceSurpacDialog.show()
 
     # 语言选择信号接收槽
     @Slot(str)

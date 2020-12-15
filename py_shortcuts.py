@@ -55,7 +55,7 @@ class ShortCuts():
         return minesched_cmd_list
 
 if __name__ == '__main__':
-    config = ConfigFactory(config='py_platform.ini').getConfig()
+    config = ConfigFactory(config_file='py_platform.ini').getConfig()
     logger = LoggerFactory(config=config).getLogger()
     short_cuts = ShortCuts(config=config, logger=logger)
     # surpacList = short_cuts.getSurpacCmdList()

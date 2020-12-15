@@ -33,7 +33,7 @@ class LoggerFactory():
 
 
 if __name__ == '__main__':
-    config = ConfigFactory(config='py_platform.ini').getConfig()
+    config = ConfigFactory(config_file='py_platform.ini').getConfig()
     logger = LoggerFactory(config=config).getLogger()
     logger.debug('Hello world!')
     for i in range(100):
