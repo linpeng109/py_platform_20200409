@@ -389,6 +389,16 @@ root:
         child_001:
           text: ' 语言选择'
           descript: ' 语言选择'
+          children:
+            child_cn:
+              text: '中文'
+              descript: '中文'
+              scl: 'py_surpac_cn.yml'
+            child_en:
+              text: '英文'
+              descript: '英文'
+              scl: 'py_surpac_en.yml'
         child_002:
           text: ' 版本选择'
           descript: ' 版本选择'
+          scl: 'p40812_绘制中段地质图.py'

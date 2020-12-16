@@ -2,11 +2,13 @@ from PySide2.QtWidgets import QWidget, QPushButton, QHBoxLayout
 
 from py_choice_surpac_dialog import ChoiceSurpacDialog
 from py_shortcuts import ShortCuts
+from py_config import ConfigFactory
+from py_logging import LoggerFactory
 
 
 class ChoicesWidget(QWidget):
 
-    def __init__(self, config, logger, ports):
+    def __init__(self, config: ConfigFactory, logger: LoggerFactory, ports: list):
         super(ChoicesWidget, self).__init__()
         self.config = config
         self.logger = logger

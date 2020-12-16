@@ -1,49 +1,51 @@
-from PySide2.QtCore import QUrl, Qt, Slot
-from PySide2.QtWidgets import *
+import os
 
-from py_choice_surpac_dialog import ChoiceSurpacDialog
+from PySide2.QtCore import Qt, Slot
+from PySide2.QtWidgets import QSplitter, QWidget, QVBoxLayout
+
 from py_communite import SurpacSocketClient, Tbc_script_thread, Tcl_script_thread, Py_script_thread, Fun_script_worker
-from py_shortcuts import ShortCuts
-from py_surpac_widget import SurpacWidget
-from py_tab_widget import TabWidget
+from py_config import ConfigFactory
+from py_logging import LoggerFactory
+from py_start_surpac_dialog import StartSurpacDialog
+from py_surpac_widget import Surpac
 from py_tree_widget import TreeWidget
-from py_web_widget import WebEngineView
 
 
-class Work_Widget(QSplitter):
-    def __init__(self, config, logger):
-        super(Work_Widget, self).__init__()
+class WorkWidget(QSplitter):
+
+    def __init__(self, config: ConfigFactory, logger: LoggerFactory):
+        super(WorkWidget, self).__init__()
         self.logger = logger
         self.config = config
         self.setOrientation(Qt.Horizontal)
 
-        # 从快捷方式中获取所有已经安装的surpac的启动命令
-        short_cuts = ShortCuts(config=config, logger=logger)
+        # surpac_widget配置
+        self.surpac = Surpac(config=config, logger=logger)
 
-        # 获取surpac命令行列表
-        self.surpac_cmd_list = short_cuts.getSurpacCmdList()
+        # 销毁所有surpac2名称的进程
+        if (config.get('surpac', 'surpac_kill_other_process')):
+            pids = self.surpac.getPidsFromPName('surpac2')
+            self.surpac.killProcess(pids)
 
-        # 构建surpac界面widget
-        self.surpac_widget, self.surpac_ports, self.surpac_pid = \
-            self.surpac.build_surpac_widget(self.surpac_cmd_list[0])
-
-        # right_widget配置
-        right_widget = QWidget()
-        right_widget_layout = QVBoxLayout()
-
-        # 构建tree界面widget
-        self.tree_widget = TreeWidget(config=config, logger=logger, port=self.surpac_ports[0])
-        right_widget_layout.addWidget(self.tree_widget)
-        right_widget.setLayout(right_widget_layout)
-
-        # 在工作区中加入surpac和right组件
-        self.addWidget(self.surpac_widget)
-        self.addWidget(right_widget)
+        # 检查surpac是否已经正确配置
+        if (self.check_surpac_location_config()):
+            # 如果surpac配置正确，则根据配置文件获取surpac启动命令
+            self.surpac_cmd_list = [self.config.get('surpac', 'surpac_location')]
+            self.start_surpac_listener(self.surpac_cmd_list[0])
+        else:
+            # 如果配置不正确，则从系统快捷方式获取surpac命令行列表
+            self.surpac_cmd_list = self.surpac.getSurpacCmdList()
+            # 弹出对话框选择surpac版本
+            self.startSurpacDialog = StartSurpacDialog(logger=self.logger, config=self.config, title='请选择Surpac版本！',
+                                                       surpacs=self.surpac_cmd_list)
+            # 将启动surpac消息关联surpac启动监听器
+            self.startSurpacDialog.start_surpac_signal.connect(self.start_surpac_listener)
+            self.startSurpacDialog.show()
 
     # 获取surpac配置地址
-    def check_surpac_localtion_config(self):
-        surpac_localtion=self.config.get
-
+    def check_surpac_location_config(self):
+        surpac_location = self.config.get('surpac', 'surpac_location')
+        return os.path.isfile(surpac_location)
 
     # 语言选择信号接收槽
     @Slot(str)
@@ -54,6 +56,25 @@ class Work_Widget(QSplitter):
                                                   port=self.surpac_ports[0])
         # surpac_socket_client.sendMsg(result)
         surpac_socket_client.closeSocket()
+
+    @Slot(str)
+    def start_surpac_listener(self, result):
+        # 构建surpac界面widget
+        self.surpac_widget, self.surpac_ports, self.surpac_pid = \
+            self.surpac.build_surpac_widget(result)
+
+        # right_widget配置
+        right_widget = QWidget()
+        right_widget_layout = QVBoxLayout()
+
+        # 构建tree界面widget
+        self.tree_widget = TreeWidget(config=self.config, logger=self.logger, port=self.surpac_ports[0])
+        right_widget_layout.addWidget(self.tree_widget)
+        right_widget.setLayout(right_widget_layout)
+
+        # 在工作区中加入surpac和right组件
+        self.addWidget(self.surpac_widget)
+        self.addWidget(right_widget)
 
     # Surpac版本选择信号接收槽
     @Slot(str)

@@ -2,8 +2,8 @@ import multiprocessing
 import os
 import sys
 
-from PySide2.QtGui import QIcon
-from PySide2.QtWidgets import QApplication
+from PySide2.QtGui import QIcon, Qt
+from PySide2.QtWidgets import QApplication, QSplashScreen
 
 from py_config import ConfigFactory
 from py_logging import LoggerFactory
@@ -26,10 +26,19 @@ if __name__ == '__main__':
 
     app.setWindowIcon(icon)
 
+    # 启动splash窗口
+    splashScreen = QSplashScreen()
+    # splashScreen.resize(300,200)
+    splashScreen.showMessage('<h1><font color="green">让每个人都成为大师！</font></h1>', Qt.AlignTop | Qt.AlignCenter, Qt.black)
+    splashScreen.show()
+
     # 启动主窗口
     mainWindow = MainWindow(config=config, logger=logger)
     mainWindow.setWindowIcon(icon)
     mainWindow.showMaximized()
+
+    # 关闭splash
+    splashScreen.finish(mainWindow)
 
     # 结束应用
     sys.exit(app.exec_())

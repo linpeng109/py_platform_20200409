@@ -1,91 +1,35 @@
-from PySide2.QtCore import QUrl, Qt, Slot
+from PySide2.QtCore import QUrl
 from PySide2.QtWidgets import *
 
-from py_choice_surpac_dialog import ChoiceSurpacDialog
-from py_communite import SurpacSocketClient, Tbc_script_thread, Tcl_script_thread, Py_script_thread, Fun_script_worker
-from py_shortcuts import ShortCuts
-from py_surpac_widget import SurpacWidget
 from py_tab_widget import TabWidget
-from py_tree_widget import TreeWidget
 from py_web_widget import WebEngineView
+from py_work_widget import WorkWidget
+from py_config import ConfigFactory
+from py_logging import LoggerFactory
 
 
 # 装配主窗口
 class MainWindow(QMainWindow):
     # 初始化
-    def __init__(self, config, logger):
+    def __init__(self, config: ConfigFactory, logger: LoggerFactory):
         super(MainWindow, self).__init__()
         self.config = config
         self.logger = logger
         self.setWindowTitle(config.get('default', 'title'))
-        self.resize(config.getint('default', 'width'), config.getint('default', 'height'))
+        self.resize(self.config.getint('default', 'width'), self.config.getint('default', 'height'))
 
-        # tab_widget
+        # tab_widget界面组件
         tab_widget = TabWidget()
 
-        # index_widget配置
+        # 构建index_widget界面组件
         index_widget = WebEngineView(config=config, logger=logger, tabWidget=tab_widget)
         index_widget.load(QUrl(config.get('index', 'url')))
         tab_widget.addTabItem(widget=index_widget, item_title='紫金矿业')
 
-        # treejs_widget配置
-        # treejs_widget = WebEngineView(config=config, logger=logger, tabWidget=tab_widget)
-        # treejs_widget.load(QUrl(config.get('threejs', 'url')))
-        # tab_widget.addTabItem(widget=treejs_widget, item_title='三维模型')
-
-        # surpac_widget配置
-        self.surpac = SurpacWidget(config=config, logger=logger)
-        # 销毁所有surpac2名称的进程
-        if (config.get('surpac', 'surpac_kill_other_process')):
-            pids = self.surpac.getPidsFromPName('surpac2')
-            self.surpac.killProcess(pids)
-        # else:
-        #     pass
-
-        # 从快捷方式中获取所有已经安装的surpac的启动命令
-        short_cuts = ShortCuts(config=config, logger=logger)
-        self.surpac_cmd_list = short_cuts.getSurpacCmdList()
-        # self.choiceDialog = ChoiceDialog(title='请选择Surpac版本', choices=self.surpac_cmd_list)
-        self.surpac_widget, self.surpac_ports, self.surpac_pid = \
-            self.surpac.build_surpac_widget(self.surpac_cmd_list[0])
-
-        # minesched_widget页签配置
-        # self.minesched = Minesched(config=config, logger=logger)
-        # minesched_cmd_list = short_cuts.getMineSchedCmdList()
-        # self.minesched_widget, self.minesched_pid = self.minesched.build_minesched_widget(minesched_cmd_list[0])
-        # tab_widget.addTabItem(widget=self.minesched_widget, item_title='MineSched')
-
-        # right_widget配置
-        right_widget = QWidget()
-        right_widget_layout = QVBoxLayout()
-
-        # choices_wigdet设置
-        # self.choices_widget = ChoicesWidget(config=config, logger=logger, ports=self.surpac_ports)
-        # right_widget_layout.addWidget(self.choices_widget)
-        # 选择语言信号与语言选择接收槽链接
-        # self.choices_widget.language_choice_dialog.choices_signal.connect(self.change_language_listener)
-        # Surpac版本选择信号与Surpac版本选择接收槽链接
-        # self.choices_widget.surpac_choice_widget_dialog.choices_signal.connect(self.change_surpac_listener)
-
-        # tree_widget设置
-        self.tree_widget = TreeWidget(config=config, logger=logger, port=self.surpac_ports[0])
-        right_widget_layout.addWidget(self.tree_widget)
-        right_widget.setLayout(right_widget_layout)
-
-        # tree_widget中向surpac发送指令
-        self.tree_widget.treeItem_func_clicked_signal.connect(self.treeItem_func_clicked_listener)
-        self.tree_widget.treeItem_tcl_clicked_signal.connect(self.treeItem_tcl_clicked_listener)
-        self.tree_widget.treeItem_tbc_clicked_signal.connect(self.treeItem_tbc_clicked_listener)
-        self.tree_widget.treeItem_py_clicked_signal.connect(self.treeItem_py_clicked_listener)
-
-        # work_widget
-        self.work_widget = QSplitter()
-        self.work_widget.setOrientation(Qt.Horizontal)
-        self.work_widget.addWidget(self.surpac_widget)
-        self.work_widget.addWidget(right_widget)
-
-        surpac_tag_title = config.get('surpac', 'surpac_tag_title')
-        tab_widget.addTabItem(widget=self.work_widget, item_title=surpac_tag_title)
+        # 构建work_widget界面组件
+        self.work_widget = WorkWidget(config=config, logger=logger)
+        work_tag_title = config.get('surpac', 'surpac_tag_title')
+        tab_widget.addTabItem(widget=self.work_widget, item_title=work_tag_title)
 
         # 指定tab不显示关闭按钮
         tab_widget.tabBar().setTabButton(0, QTabBar.RightSide, None)
@@ -98,56 +42,16 @@ class MainWindow(QMainWindow):
         # 在窗口中央显示tab
         self.setCentralWidget(tab_widget)
 
-        # 弹出窗口
-        self.choiceSurpacDialog = ChoiceSurpacDialog(title="请选择surpac版本", surpacs=self.surpac_cmd_list)
-        self.choiceSurpacDialog.show()
-
-    # 语言选择信号接收槽
-    @Slot(str)
-    def change_language_listener(self, result):
-        self.logger.debug(result)
-        self.tree_widget.treeWidget_load(result)
-        surpac_socket_client = SurpacSocketClient(logger=self.logger, config=self.config,
-                                                  port=self.surpac_ports[0])
-        # surpac_socket_client.(result)
-        surpac_socket_client.closeSocket()
-
-    # Surpac版本选择信号接收槽
-    @Slot(str)
-    def change_surpac_listener(self, result):
-        self.surpac.killProcess([self.surpac_pid])
-        self.surpac_widget, self.surpac_ports, self.surpac_pid = self.surpac.build_surpac_widget(result)
-        self.work_widget.replaceWidget(0, self.surpac_widget)
-
-    # func
-    @Slot(str)
-    def treeItem_func_clicked_listener(self, result):
-        client = Fun_script_worker(logger=self.logger, config=self.config, port=self.surpac_ports[0], msg=result)
-        client.start()
-
-    # tcl
-    @Slot(str)
-    def treeItem_tcl_clicked_listener(self, result):
-        client = Tcl_script_thread(config=self.config, logger=self.logger, port=self.surpac_ports[0], msg=result)
-        client.start()
-
-    # tbc
-    @Slot(str)
-    def treeItem_tbc_clicked_listener(self, result):
-        client = Tbc_script_thread(logger=self.logger, config=self.config, port=self.surpac_ports[0], msg=result)
-        client.start()
-
-    # py
-    @Slot(str)
-    def treeItem_py_clicked_listener(self, result):
-        client = Py_script_thread(logger=self.logger, config=self.config, port=self.surpac_ports[0], msg=result)
-        client.start()
-
     # 窗口关闭
     def closeEvent(self, event):
         replay = QMessageBox.question(self, '操作提示', '是否退出应用？', QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
         if replay == QMessageBox.Yes:
             event.accept()
+            # 获取surpac进程id
+            surpac_id = self.work_widget.surpac.surpac_pid
+            # 如果surpac已经启动，则清除surpac进程
+            if surpac_id > 0:
+                self.work_widget.surpac.killProcess([surpac_id])
             super().closeEvent(event)
         else:
             event.ignore()

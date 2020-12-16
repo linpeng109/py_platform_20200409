@@ -1,14 +1,19 @@
 from PySide2.QtCore import Qt, Signal
 from PySide2.QtWidgets import QDialog, QButtonGroup, QVBoxLayout, QRadioButton, QDialogButtonBox
 
+from py_config import ConfigFactory
+from py_logging import LoggerFactory
+
 
 class ChoiceLanguageDialog(QDialog):
     # 定义选择信号
     choices_language_dialog_signal = Signal(str)
 
     # 初始化
-    def __init__(self, title: str, languages: list):
+    def __init__(self, config: ConfigFactory, logger: LoggerFactory, title: str, languages: list):
         super(ChoiceLanguageDialog, self).__init__()
+        self.config = config
+        self.logger = logger
         self.setWindowTitle(title)
         self.setModal(True)
         self.setWindowFlag(Qt.WindowContextHelpButtonHint, False)

@@ -3,12 +3,14 @@ import threading
 from socket import socket, AF_INET, SOCK_STREAM
 
 from py_path import Path
+from py_config import ConfigFactory
+from py_logging import LoggerFactory
 
 
 # Surpac通讯处理
 class SurpacSocketClient:
 
-    def __init__(self, config, logger, port: object):
+    def __init__(self, config: ConfigFactory, logger: LoggerFactory, port: object):
         self.HOST = 'localhost'
         self.BUFSIZ = 1024
         self.PORT = port
@@ -68,6 +70,7 @@ class Tcl_script_thread(threading.Thread):
         self.surpac_socket_client.closeSocket()
         return result
 
+
 class Surpac_changeversion_thread(threading.Thread):
     def __init__(self, config, logger, port, msg):
         super(Surpac_changeversion_thread, self).__init__()
@@ -108,6 +111,7 @@ class Surpac_changelanguage_thread(threading.Thread):
         self.logger.debug('The TCL excute result: %s ' % result)
         self.surpac_socket_client.closeSocket()
         return result
+
 
 class Py_script_thread(threading.Thread):
     def __init__(self, config, logger, port, msg):

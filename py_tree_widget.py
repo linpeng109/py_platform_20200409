@@ -12,6 +12,7 @@ class TreeWidget(QTreeWidget):
     treeItem_tcl_clicked_signal = Signal(str)
     treeItem_py_clicked_signal = Signal(str)
     treeItem_func_clicked_signal = Signal(str)
+    treeItem_choice_surpac_languages_signal=Signal(str)
 
     # 初始化
     def __init__(self, port, config, logger):
@@ -19,7 +20,6 @@ class TreeWidget(QTreeWidget):
         self.config = config
         self.logger = logger
         surpac_scl_cfg = self.config.get('surpac', 'surpac_scl_cfg')
-        # self.treeWidget_load(surpac_scl_cfg=surpac_scl_cfg, port=port)
         self.treeWidget_load(surpac_scl_cfg=surpac_scl_cfg)
 
     # 重构Tree组件
@@ -41,8 +41,8 @@ class TreeWidget(QTreeWidget):
     # 树形菜单单击处理
     def __on_item_clicked(self, item):
         #
+        print(item.text(2))
         print('==========插入读取软件锁代码============')
-
         #
         msg = item.text(2)
         if (msg):
@@ -52,6 +52,8 @@ class TreeWidget(QTreeWidget):
                 self.treeItem_tcl_clicked_signal.emit(msg)
             elif '.py' in msg:
                 self.treeItem_py_clicked_signal.emit(msg)
+            elif '_cn.yml' in msg:
+                self.treeItem_choice_surpac_languages_signal.emit(msg)
             else:
                 self.treeItem_func_clicked_signal.emit(msg)
 
@@ -88,8 +90,6 @@ class TreeWidget(QTreeWidget):
                 try:
                     expanded = menu_dict[key]['expanded']
                     item.setExpanded(expanded)
-                    print(item.text(0))
-                    print(item.isExpanded())
                 except KeyError:
                     pass
 
@@ -126,8 +126,6 @@ class TreeWidget(QTreeWidget):
                 try:
                     expanded = menu_dict[key]['expanded']
                     menu_toplevel_item.setExpanded(expanded)
-                    print("==============================")
-                    print(menu_toplevel_item.isExpanded())
                 except KeyError:
                     pass
 

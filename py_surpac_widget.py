@@ -10,15 +10,18 @@ import win32process
 from PySide2.QtGui import QWindow
 from PySide2.QtWidgets import QWidget
 
-
 # 生成surpac工作区widget
 from py_path import Path
+from py_shortcuts import ShortCuts
 
 
-class SurpacWidget():
+class Surpac():
+
     def __init__(self, config, logger):
         self.logger = logger
         self.config = config
+        self.shortcuts = ShortCuts(config=config, logger=logger)
+        self.surpac_pid = -1
 
     # 启动执行文件返回进程pid
     def startProcess(self, cmd):
@@ -119,16 +122,15 @@ class SurpacWidget():
     # 获取surpac的安装路径列表（surpac可以安装多个版本）
     def getSurpacCmdList(self):
         surpac_cmd_list = []
-        lnk_list = os.listdir(self.PROGRAM_DATA_PATH)
+        lnk_list = os.listdir(self.shortcuts.PROGRAM_DATA_PATH)
         for lnk in lnk_list:
-            lnk_file = os.path.join(self.PROGRAM_DATA_PATH, lnk)
+            lnk_file = os.path.join(self.shortcuts.PROGRAM_DATA_PATH, lnk)
             if Path.filenameIsContains(lnk_file, 'surpac'):
-                result = self.resolve_shortcut(lnk_file)
+                result = self.shortcuts.resolve_shortcut(lnk_file)
                 if '_x64' in result:
                     result = result.replace('Program Files (x86)', 'Program Files')
                 surpac_cmd_list.append(result)
         return surpac_cmd_list
-
 
     # 生成surpac工作区widget
     def build_surpac_widget(self, cmd: str):
