@@ -41,6 +41,7 @@ class ChoiceSurpacDialog(QDialog):
         # 先关闭对话框，然后发送消息
         super(ChoiceSurpacDialog, self).accept()
         self.choices_surpac_signal.emit(self.surpacs[self.surpac_id])
+        print("********")
 
     def choiceSurpacChange(self):
         self.surpac_id = self.choice_surpac_button_group.checkedId()

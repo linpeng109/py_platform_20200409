@@ -28,7 +28,6 @@ if __name__ == '__main__':
 
     # 启动splash窗口
     splashScreen = QSplashScreen()
-    # splashScreen.resize(300,200)
     splashScreen.showMessage('<h1><font color="green">让每个人都成为大师！</font></h1>', Qt.AlignTop | Qt.AlignCenter, Qt.black)
     splashScreen.show()
 

@@ -3,7 +3,10 @@ from PySide2.QtCore import Signal
 from PySide2.QtGui import QFont
 from PySide2.QtWidgets import QTreeWidgetItem, QTreeWidget
 
+from py_choice_surpac_dialog import ChoiceSurpacDialog
+from py_choice_language_dialog import ChoiceLanguageDialog
 from py_path import Path
+from py_shortcuts import ShortCuts
 
 
 class TreeWidget(QTreeWidget):
@@ -12,7 +15,6 @@ class TreeWidget(QTreeWidget):
     treeItem_tcl_clicked_signal = Signal(str)
     treeItem_py_clicked_signal = Signal(str)
     treeItem_func_clicked_signal = Signal(str)
-    treeItem_choice_surpac_languages_signal=Signal(str)
 
     # 初始化
     def __init__(self, port, config, logger):
@@ -21,6 +23,13 @@ class TreeWidget(QTreeWidget):
         self.logger = logger
         surpac_scl_cfg = self.config.get('surpac', 'surpac_scl_cfg')
         self.treeWidget_load(surpac_scl_cfg=surpac_scl_cfg)
+        self.shortcut = ShortCuts(config=self.config, logger=self.logger)
+        surpacs = self.shortcut.getSurpacCmdList()
+        self.choice_surpac_dialog = ChoiceSurpacDialog(config=self.config, logger=self.logger, title='请选择Surpac版本',
+                                                       surpacs=surpacs)
+        surpac_languages = str(self.config.get('surpac', 'surpac_languages')).split(';')
+        self.choice_language_dialog = ChoiceLanguageDialog(config=config, logger=logger, title="请选择Surpac语言",
+                                                           languages=surpac_languages)
 
     # 重构Tree组件
     def treeWidget_load(self, surpac_scl_cfg):
@@ -32,6 +41,7 @@ class TreeWidget(QTreeWidget):
 
         # 加入相对路径，处理pyinstaller打包后yml导入错误问题
         self.scl_path = Path.resource_path(surpac_scl_cfg)
+
         # 加入menu菜单配置yml文件
         menus = self.build_toplevel_menu(surpac_scl_cfg=self.scl_path)
         for item in menus:
@@ -52,8 +62,10 @@ class TreeWidget(QTreeWidget):
                 self.treeItem_tcl_clicked_signal.emit(msg)
             elif '.py' in msg:
                 self.treeItem_py_clicked_signal.emit(msg)
-            elif '_cn.yml' in msg:
-                self.treeItem_choice_surpac_languages_signal.emit(msg)
+            elif 'choice_surpac' in msg:
+                self.choice_surpac_dialog.show()
+            elif 'choice_language' in msg:
+                self.choice_language_dialog.show()
             else:
                 self.treeItem_func_clicked_signal.emit(msg)
 

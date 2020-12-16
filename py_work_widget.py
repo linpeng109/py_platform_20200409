@@ -18,6 +18,8 @@ class WorkWidget(QSplitter):
         self.logger = logger
         self.config = config
         self.setOrientation(Qt.Horizontal)
+        self.surpac_ports = None
+        self.tree_widget = None
 
         # surpac_widget配置
         self.surpac = Surpac(config=config, logger=logger)
@@ -27,7 +29,7 @@ class WorkWidget(QSplitter):
             pids = self.surpac.getPidsFromPName('surpac2')
             self.surpac.killProcess(pids)
 
-        # 检查surpac是否已经正确配置
+        # 读取配置文件，检查surpac是否已经正确配置
         if (self.check_surpac_location_config()):
             # 如果surpac配置正确，则根据配置文件获取surpac启动命令
             self.surpac_cmd_list = [self.config.get('surpac', 'surpac_location')]
@@ -38,9 +40,10 @@ class WorkWidget(QSplitter):
             # 弹出对话框选择surpac版本
             self.startSurpacDialog = StartSurpacDialog(logger=self.logger, config=self.config, title='请选择Surpac版本！',
                                                        surpacs=self.surpac_cmd_list)
-            # 将启动surpac消息关联surpac启动监听器
-            self.startSurpacDialog.start_surpac_signal.connect(self.start_surpac_listener)
             self.startSurpacDialog.show()
+
+            # 将启动surpac消息与surpac启动监听器关联
+            self.startSurpacDialog.start_surpac_signal.connect(self.start_surpac_listener)
 
     # 获取surpac配置地址
     def check_surpac_location_config(self):
@@ -54,7 +57,6 @@ class WorkWidget(QSplitter):
         self.tree_widget.treeWidget_load(result)
         surpac_socket_client = SurpacSocketClient(logger=self.logger, config=self.config,
                                                   port=self.surpac_ports[0])
-        # surpac_socket_client.sendMsg(result)
         surpac_socket_client.closeSocket()
 
     @Slot(str)
@@ -66,11 +68,17 @@ class WorkWidget(QSplitter):
         # right_widget配置
         right_widget = QWidget()
         right_widget_layout = QVBoxLayout()
+        right_widget.setLayout(right_widget_layout)
 
         # 构建tree界面widget
         self.tree_widget = TreeWidget(config=self.config, logger=self.logger, port=self.surpac_ports[0])
         right_widget_layout.addWidget(self.tree_widget)
-        right_widget.setLayout(right_widget_layout)
+
+        # 将改变surpac版本的消息与surpac更改监听器关联
+        self.tree_widget.choice_surpac_dialog.choices_surpac_signal.connect(self.change_surpac_listener)
+
+        # 将改变语言的消息与语言改变监听器关联
+        self.tree_widget.choice_language_dialog.choices_language_dialog_signal.connect(self.change_language_listener)
 
         # 在工作区中加入surpac和right组件
         self.addWidget(self.surpac_widget)
@@ -81,7 +89,7 @@ class WorkWidget(QSplitter):
     def change_surpac_listener(self, result):
         self.surpac.killProcess([self.surpac_pid])
         self.surpac_widget, self.surpac_ports, self.surpac_pid = self.surpac.build_surpac_widget(result)
-        self.work_widget.replaceWidget(0, self.surpac_widget)
+        self.replaceWidget(0, self.surpac_widget)
 
     # func
     @Slot(str)
