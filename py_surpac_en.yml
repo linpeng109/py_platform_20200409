@@ -361,6 +361,20 @@ root:
           descript: '绘制中段地质图'
           scl: 'p40812_绘制中段地质图.py'
 
+    surpac_setting:
+      text: 'Surpac设置'
+      descript: 'Surpac设置'
+      children:
+        surpac_languages:
+          text: ' 语言选择'
+          descript: ' 语言选择'
+          scl: 'choice_language'
+        surpac_version:
+          text: ' 版本选择'
+          descript: ' 版本选择'
+          scl: 'choice_surpac'
+
+
     child14:
       text: '关于'
       descript: '关于产品'

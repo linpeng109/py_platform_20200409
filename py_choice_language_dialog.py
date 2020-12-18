@@ -40,6 +40,7 @@ class ChoiceLanguageDialog(QDialog):
         # 先关闭对话框，然后发送消息
         super(ChoiceLanguageDialog, self).accept()
         self.choices_language_dialog_signal.emit(self.languages[self.language_id])
+        self.config.setConfig('surpac', 'surpac_scl_cfg', self.languages[self.language_id])
 
     def languageChange(self):
         self.language_id = self.choice_language_button_group.checkedId()

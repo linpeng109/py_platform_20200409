@@ -2,7 +2,7 @@ import multiprocessing
 import os
 import sys
 
-from PySide2.QtGui import QIcon, Qt
+from PySide2.QtGui import QIcon, Qt, QPixmap
 from PySide2.QtWidgets import QApplication, QSplashScreen
 
 from py_config import ConfigFactory
@@ -28,8 +28,11 @@ if __name__ == '__main__':
 
     # 启动splash窗口
     splashScreen = QSplashScreen()
-    splashScreen.showMessage('<h1><font color="green">让每个人都成为大师！</font></h1>', Qt.AlignTop | Qt.AlignCenter, Qt.black)
+    pixmap = QPixmap(Path.resource_path('master_splash.png'))
+    splashScreen.setPixmap(pixmap)
+    splashScreen.resize(pixmap.size())
     splashScreen.show()
+    # splashScreen.showMessage('<h1><font color="green">让每个人都成为大师！</font></h1>', Qt.AlignTop | Qt.AlignCenter, Qt.white)
 
     # 启动主窗口
     mainWindow = MainWindow(config=config, logger=logger)
