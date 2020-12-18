@@ -1,7 +1,7 @@
 import os
 import os.path
 import sys
-
+import pkgutil
 
 class Path():
 
@@ -20,6 +20,7 @@ class Path():
     def filenameIsContains(self, fullPathFileName: str, strs):
         filename = Path.splitFullPathFileName(fullPathFileName).get('filename').lower()
         result = True
+
         for str in strs:
             result = filename.__contains__(str.lower()) and result
         return result
