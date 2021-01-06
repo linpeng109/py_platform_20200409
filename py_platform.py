@@ -8,6 +8,8 @@ from PySide2.QtWidgets import QApplication, QSplashScreen
 from py_config import ConfigFactory
 from py_logging import LoggerFactory
 from py_main_window import MainWindow
+from py_minesched_widget import MineschedWidget
+from py_whittle_widget import Whittle
 from py_path import Path
 
 if __name__ == '__main__':

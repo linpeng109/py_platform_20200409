@@ -6,7 +6,9 @@ from py_web_widget import WebEngineView
 from py_work_widget import WorkWidget
 from py_config import ConfigFactory
 from py_logging import LoggerFactory
-
+from py_minesched_widget import MineschedWidget
+from py_whittle_widget import Whittle
+from py_shortcuts import ShortCuts
 
 # 装配主窗口
 class MainWindow(QMainWindow):
@@ -30,6 +32,25 @@ class MainWindow(QMainWindow):
         self.work_widget = WorkWidget(config=config, logger=logger)
         work_tag_title = config.get('surpac', 'surpac_tag_title')
         tab_widget.addTabItem(widget=self.work_widget, item_title=work_tag_title)
+
+        # treejs_widget
+        treejs_widget = WebEngineView(config=config, logger=logger, tabWidget=tab_widget)
+        treejs_widget.load(QUrl(config.get('threejs', 'url')))
+        tab_widget.addTabItem(widget=treejs_widget, item_title='三维模型')
+
+        short_cuts = ShortCuts(config=config, logger=logger)
+
+        # minesched_widget
+        self.minesched = MineschedWidget(config=config, logger=logger)
+        minesched_cmd_list = short_cuts.getMineSchedCmdList()
+        self.minesched_widget, self.minesched_pid = self.minesched.build_minesched_widget(minesched_cmd_list[0])
+        tab_widget.addTabItem(widget=self.minesched_widget, item_title='MineSched')
+
+        # whittle_widget
+        self.whittle = Whittle(config=config, logger=logger)
+        whittle_cmd_list = short_cuts.getWhittleCmdList()
+        self.whittle_widget, self.whittle_pid = self.whittle.build_whittle_widget(whittle_cmd_list[0])
+        tab_widget.addTabItem(widget=self.whittle_widget, item_title='Whittle')
 
         # 指定tab不显示关闭按钮
         tab_widget.tabBar().setTabButton(0, QTabBar.RightSide, None)
