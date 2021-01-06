@@ -10,7 +10,7 @@ import win32process
 from PySide2.QtGui import QWindow
 from PySide2.QtWidgets import QWidget
 
-# 生成minesched工作区widget
+# 生成whillte工作区widget
 from py_config import ConfigFactory
 from py_logging import LoggerFactory
 
