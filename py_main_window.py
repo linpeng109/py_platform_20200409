@@ -4,6 +4,7 @@ from PySide2.QtWidgets import *
 from py_choices_widget import ChoicesWidget
 from py_communite import SurpacSocketClient, Tbc_script_thread, Tcl_script_thread, Py_script_thread, Fun_script_worker
 from py_minesched import Minesched
+from py_whittle import Whittle
 from py_shortcuts import ShortCuts
 from py_surpac import Surpac
 from py_tab_widget import TabWidget
@@ -53,6 +54,12 @@ class MainWindow(QMainWindow):
         minesched_cmd_list = short_cuts.getMineSchedCmdList()
         self.minesched_widget, self.minesched_pid = self.minesched.build_minesched_widget(minesched_cmd_list[0])
         tab_widget.addTabItem(widget=self.minesched_widget, item_title='MineSched')
+
+        # whittle_widget
+        self.whittle = Whittle(config=config, logger=logger)
+        whittle_cmd_list = short_cuts.getWhittleCmdList()
+        self.whittle_widget, self.whittle_pid = self.whittle.build_whittle_widget(whittle_cmd_list[0])
+        tab_widget.addTabItem(widget=self.whittle_widget, item_title='Whittle')
 
         # choices_wigdet
         self.choices_widget = ChoicesWidget(config=config, logger=logger, ports=self.surpac_ports)

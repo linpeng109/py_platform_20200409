@@ -116,11 +116,11 @@ class Whittle():
         native_wnd = QWindow.fromWinId(hwnd)
         return QWidget.createWindowContainer(native_wnd)
 
-    # 生成surpac工作区widget
+    # 生成Whittle工作区widget
     def build_whittle_widget(self, cmd: str):
         # self.killProcess([self.pid])
         self.whittle_pid = self.startProcess(cmd)
-        hwnd = self.getTheMainWindow(pid=self.whittle_pid, spTitle='MineSched')
+        hwnd = self.getTheMainWindow(pid=self.whittle_pid, spTitle='Whittle')
         # self.surpac_ports = self.getPortsFromPid(pid=self.minesched_pid)
         self.whittle_widget = self.convertWndToWidget(hwnd=hwnd)
         return self.whittle_widget, self.whittle_pid
