@@ -67,12 +67,12 @@ class ShortCuts():
 
 
 if __name__ == '__main__':
-    config = ConfigFactory(config='py_platform.ini').getConfig()
+    config = ConfigFactory(config_file='py_platform.ini').getConfig()
     logger = LoggerFactory(config=config).getLogger()
     short_cuts = ShortCuts(config=config, logger=logger)
-    # surpacList = short_cuts.getSurpacCmdList()
-    # logger.debug(surpacList)
+    surpacList = short_cuts.getSurpacCmdList()
+    logger.debug(surpacList)
     # mineschedList = short_cuts.getMineSchedCmdList()
     # logger.debug(mineschedList)
-    whittleList = short_cuts.getWhittleCmdList()
-    logger.debug(whittleList)
+    # whittleList = short_cuts.getWhittleCmdList()
+    # logger.debug(whittleList)
