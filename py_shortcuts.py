@@ -54,11 +54,25 @@ class ShortCuts():
                 minesched_cmd_list.append(result)
         return minesched_cmd_list
 
+    def getWhittleCmdList(self):
+        whittle_cmd_list = []
+        lnk_list = os.listdir(self.PROGRAM_DATA_PATH)
+        for lnk in lnk_list:
+            lnk_file = os.path.join(self.PROGRAM_DATA_PATH, lnk)
+            if Path.filenameIsContains(lnk_file, 'whittle'):
+                result = self.resolve_shortcut(lnk_file)
+                if '_x64' in result:
+                    result = result.replace('Program Files (x86)', 'Program Files')
+                whittle_cmd_list.append(result)
+        return whittle_cmd_list
+
 if __name__ == '__main__':
     config = ConfigFactory(config='py_platform.ini').getConfig()
     logger = LoggerFactory(config=config).getLogger()
     short_cuts = ShortCuts(config=config, logger=logger)
     # surpacList = short_cuts.getSurpacCmdList()
     # logger.debug(surpacList)
-    mineschedList = short_cuts.getMineSchedCmdList()
-    logger.debug(mineschedList)
+    # mineschedList = short_cuts.getMineSchedCmdList()
+    # logger.debug(mineschedList)
+    whittleList = short_cuts.getWhittleCmdList()
+    logger.debug(whittleList)
