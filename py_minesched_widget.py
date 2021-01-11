@@ -116,14 +116,18 @@ class MineschedWidget():
         native_wnd = QWindow.fromWinId(hwnd)
         return QWidget.createWindowContainer(native_wnd)
 
-    # 生成surpac工作区widget
+    # 生成minesched工作区widget
     def build_minesched_widget(self, cmd: str):
-        # self.killProcess([self.pid])
         self.minesched_pid = self.startProcess(cmd)
         hwnd = self.getTheMainWindow(pid=self.minesched_pid, spTitle='MineSched')
         # self.surpac_ports = self.getPortsFromPid(pid=self.minesched_pid)
         self.minesched_widget = self.convertWndToWidget(hwnd=hwnd)
         return self.minesched_widget, self.minesched_pid
+
+    # 检查minesched安装位置
+    def check_minesched_location_config(self):
+        minesched_location = self.config.get('minesched', 'minesched_location')
+        return os.path.isfile(minesched_location)
 
 
 if __name__ == '__main__':

@@ -5,6 +5,7 @@ from py_config import ConfigFactory
 from py_logging import LoggerFactory
 from py_master_widget import MasterWidget
 from py_minesched_widget import MineschedWidget
+from py_shortcuts import ShortCuts
 from py_tab_widget import TabWidget
 from py_web_widget import WebEngineView
 from py_whittle_widget import WhittleWidget
@@ -45,29 +46,42 @@ class MainWindow(QMainWindow):
         # 指定tab不显示关闭按钮
         tab_widget.tabBar().setTabButton(2, QTabBar.RightSide, None)
 
-        # short_cuts = ShortCuts(config=config, logger=logger)
+        # 生成快捷方式读取对象
+        short_cuts = ShortCuts(config=config, logger=logger)
 
-        # minesched_widget
+        # 生成minesched_widget组件
         self.minesched = MineschedWidget(config=config, logger=logger)
-        # minesched_cmd_list = short_cuts.getMineSchedCmdList()
         minesched_cmd_list = []
-        minesched_cmd_list.append(config.get('minesched', 'minesched_location'))
-        self.minesched_widget, self.minesched_pid = self.minesched.build_minesched_widget(minesched_cmd_list[0])
-        minesched_tag_title = config.get('minesched', 'minesched_tag_title')
-        tab_widget.addTabItem(widget=self.minesched_widget, item_title=minesched_tag_title, index=3)
-        # 指定tab不显示关闭按钮
-        tab_widget.tabBar().setTabButton(3, QTabBar.RightSide, None)
+        # 检查minesched配置是否争取
+        if self.minesched.check_minesched_location_config():
+            minesched_cmd_list.append(config.get('minesched', 'minesched_location'))
+        else:
+            minesched_cmd_list = short_cuts.getMineSchedCmdList()
+        if len(minesched_cmd_list) > 0:
+            self.config.setConfig('minesched', 'minesched_location', minesched_cmd_list[0])
+            self.minesched_widget, self.minesched_pid = self.minesched.build_minesched_widget(minesched_cmd_list[0])
+            minesched_tag_title = config.get('minesched', 'minesched_tag_title')
+            tab_widget.addTabItem(widget=self.minesched_widget, item_title=minesched_tag_title, index=3)
+            # 指定tab不显示关闭按钮
+            tab_widget.tabBar().setTabButton(3, QTabBar.RightSide, None)
+        else:
+            self.logger.debug('minesched is not found')
 
         # whittle_widget
         self.whittle = WhittleWidget(config=config, logger=logger)
-        # whittle_cmd_list = short_cuts.getWhittleCmdList()
         whittle_cmd_list = []
-        whittle_cmd_list.append(config.get('whittle', 'whittle_location'))
-        self.whittle_widget, self.whittle_pid = self.whittle.build_whittle_widget(whittle_cmd_list[0])
-        whittle_tag_title = config.get('whittle', 'whittle_tag_title')
-        tab_widget.addTabItem(widget=self.whittle_widget, item_title=whittle_tag_title, index=4)
-        # 指定tab不显示关闭按钮
-        tab_widget.tabBar().setTabButton(4, QTabBar.RightSide, None)
+        if self.whittle.check_whittle_location_config():
+            whittle_cmd_list.append(config.get('whittle', 'whittle_location'))
+        else:
+            whittle_cmd_list = short_cuts.getWhittleCmdList()
+        if len(whittle_cmd_list) > 0:
+            self.whittle_widget, self.whittle_pid = self.whittle.build_whittle_widget(whittle_cmd_list[0])
+            whittle_tag_title = config.get('whittle', 'whittle_tag_title')
+            tab_widget.addTabItem(widget=self.whittle_widget, item_title=whittle_tag_title, index=4)
+            # 指定tab不显示关闭按钮
+            tab_widget.tabBar().setTabButton(4, QTabBar.RightSide, None)
+        else:
+            self.logger.debug('whittle is not found')
 
         # 指定当前tab
         index_tab = config.getint('default', 'index_tab')

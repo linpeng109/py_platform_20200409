@@ -116,6 +116,11 @@ class WhittleWidget():
         native_wnd = QWindow.fromWinId(hwnd)
         return QWidget.createWindowContainer(native_wnd)
 
+    # 检查whittle配置是否正确
+    def check_whittle_location_config(self):
+        whittle_location = self.config.get('whittle', 'whittle_location')
+        return os.path.isfile(whittle_location)
+
     # 生成Whittle工作区widget
     def build_whittle_widget(self, cmd: str):
         # self.killProcess([self.pid])
