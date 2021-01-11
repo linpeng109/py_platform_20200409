@@ -8,6 +8,10 @@ root:
       descript: 'test'
       expanded: True
       children:
+        init:
+          text: '执行init文件'
+          descript: '执行init文件'
+          scl: 'test_init.py'
         tbc:
           text: '执行tbc文件'
           descript: '执行tbc文件'

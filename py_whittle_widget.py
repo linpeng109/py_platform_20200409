@@ -15,7 +15,7 @@ from py_config import ConfigFactory
 from py_logging import LoggerFactory
 
 
-class Whittle():
+class WhittleWidget():
     def __init__(self, config, logger):
         self.logger = logger
         self.config = config
@@ -131,7 +131,7 @@ if __name__ == '__main__':
     config = ConfigFactory(config='py_platform.ini').getConfig()
     logger = LoggerFactory(config=config).getLogger()
 
-    whittle = Whittle(config=config, logger=logger)
+    whittle = WhittleWidget(config=config, logger=logger)
     whittle_pid = whittle.startProcess(
         cmd='C:/Program Files/Dassault Systemes/GEOVIA MineSched/9.2.0/MineSched.exe')
     logger.debug(whittle_pid)

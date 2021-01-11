@@ -44,7 +44,7 @@ class TclRunThread(threading.Thread):
             self.item.text(2))
         message = 'RCTL\n' + 'TCLSCRIPTBEGIN\n' + tbcCommand + ' TCLSCRIPTEND\n'
         result = surpac_socket.sendMsg(message)
-        print('The TBC excute result:\n %s ' % result)
+        print('The TCL excute result:\n %s ' % result)
         surpac_socket.closeSocket()
         return
 

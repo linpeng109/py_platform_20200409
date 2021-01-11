@@ -3,8 +3,8 @@ import os
 from PySide2.QtCore import Qt, Slot
 from PySide2.QtWidgets import QSplitter, QWidget, QVBoxLayout
 
-from py_communite import Changelanguage_thread
-from py_communite import Tbc_script_thread, Tcl_script_thread, Py_script_thread, Fun_script_worker
+from py_communite import Surpac_changelanguage_worker, Surpac_init_worker
+from py_communite import Tbc_script_worker, Tcl_script_worker, Py_script_worker, Fun_script_worker
 from py_config import ConfigFactory
 from py_logging import LoggerFactory
 from py_start_surpac_dialog import StartSurpacDialog
@@ -12,10 +12,10 @@ from py_surpac_widget import Surpac
 from py_tree_widget import TreeWidget
 
 
-class WorkWidget(QSplitter):
+class MasterWidget(QSplitter):
 
     def __init__(self, config: ConfigFactory, logger: LoggerFactory):
-        super(WorkWidget, self).__init__()
+        super(MasterWidget, self).__init__()
         self.logger = logger
         self.config = config
         self.setOrientation(Qt.Horizontal)
@@ -58,19 +58,20 @@ class WorkWidget(QSplitter):
         self.tree_widget.treeWidget_load(result)
         # 命令与执行脚本对应(待优化)
         if ('_cn' in result):
-            client = Changelanguage_thread(logger=self.logger, config=self.config, port=self.surpac_ports[0],
-                                           msg='test_language_cn.tcl')
+            client = Surpac_changelanguage_worker(logger=self.logger, config=self.config, port=self.surpac_ports[0],
+                                                  msg='test_language_cn.tcl')
             client.start()
         elif ('_en' in result):
-            client = Changelanguage_thread(logger=self.logger, config=self.config, port=self.surpac_ports[0],
-                                           msg='test_language_en.tcl')
+            client = Surpac_changelanguage_worker(logger=self.logger, config=self.config, port=self.surpac_ports[0],
+                                                  msg='test_language_en.tcl')
             client.start()
 
     @Slot(str)
     def start_surpac_listener(self, result):
         # 构建surpac界面widget
-        self.surpac_widget, self.surpac_ports, self.surpac_pid = \
-            self.surpac.build_surpac_widget(result)
+        self.surpac_widget, self.surpac_ports, self.surpac_pid = self.surpac.build_surpac_widget(result)
+        # surpac_init_worker = Surpac_init_worker(config=self.config, logger=self.logger, port=self.surpac_ports[0])
+        # surpac_init_worker.start()
 
         # right_widget配置
         right_widget = QWidget()
@@ -111,17 +112,17 @@ class WorkWidget(QSplitter):
     # 运行tcl类脚本
     @Slot(str)
     def treeItem_tcl_clicked_listener(self, result):
-        client = Tcl_script_thread(config=self.config, logger=self.logger, port=self.surpac_ports[0], msg=result)
+        client = Tcl_script_worker(config=self.config, logger=self.logger, port=self.surpac_ports[0], msg=result)
         client.start()
 
     # 运行tbc类脚本
     @Slot(str)
     def treeItem_tbc_clicked_listener(self, result):
-        client = Tbc_script_thread(logger=self.logger, config=self.config, port=self.surpac_ports[0], msg=result)
+        client = Tbc_script_worker(logger=self.logger, config=self.config, port=self.surpac_ports[0], msg=result)
         client.start()
 
     # 运行py类脚本
     @Slot(str)
     def treeItem_py_clicked_listener(self, result):
-        client = Py_script_thread(logger=self.logger, config=self.config, port=self.surpac_ports[0], msg=result)
+        client = Py_script_worker(logger=self.logger, config=self.config, port=self.surpac_ports[0], msg=result)
         client.start()

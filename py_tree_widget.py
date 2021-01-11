@@ -40,7 +40,7 @@ class TreeWidget(QTreeWidget):
         self.itemClicked.connect(self.__on_item_clicked)
 
         # 加入相对路径，处理pyinstaller打包后yml导入错误问题
-        self.scl_path = Path.resource_path(surpac_scl_cfg)
+        self.scl_path = Path.get_resource_path(surpac_scl_cfg)
 
         # 加入menu菜单配置yml文件
         menus = self.build_toplevel_menu(surpac_scl_cfg=self.scl_path)
