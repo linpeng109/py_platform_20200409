@@ -1,27 +1,33 @@
 root:
-  text: '矿山企业三维建模流程（建模大师）'
-  descript: '矿山企业三维建模流程（建模大师）'
+  text: '地质建模大师'
+  descript: '地质建模大师'
+  expanded: True
   children:
-    child0:
+    test:
       text: '测试'
       descript: 'test'
+      expanded: True
       children:
-        child01:
+        init:
+          text: '执行init文件'
+          descript: '执行init文件'
+          scl: 'test_init.py'
+        tbc:
           text: '执行tbc文件'
           descript: '执行tbc文件'
-          scl: 'D:\\Workspace\\py_surpac_20200404\\sclScript\\m91111_about.tbc'
-        child02:
+          scl: 'test_about.tbc'
+        tcl:
           text: '执行tcl脚本'
           descript: '执行tcl脚本'
-          scl: 'D:\\Workspace\\py_surpac_20200404\\sclScript\\m91111_about.tcl'
-        child03:
+          scl: 'test_about.tcl'
+        py:
           text: '执行python导入的message'
           descript: '执行python导入的message'
-          scl: 'p91111_about.py'
-    child1:
+          scl: 'test_about.py'
+    prepare:
       text: '准备'
       descript: '在Surpac当前的工作目录下，根据输入的“项目名称”创建项目文件夹，并在其中创建模用的常用文件夹'
-      children:
+      create_dir:
         child11:
           text: '创建目录结构'
           descript: '创建目录结构'
@@ -272,15 +278,15 @@ root:
       text: '块模型'
       descript: '创建块模型并进行估值和赋值，资源储量汇总报告'
       children:
-        child111:
+        p20002:
           text: '创建块模型'
           descript: '创建块模型'
           scl: 'p20002_创建块模型.py'
-        child112:
+        p20012:
           text: '赋矿体编号'
           descript: '赋矿体编号'
           scl: 'p20012_赋矿体编号.py'
-        child113:
+        p20036:
           text: '块体模型赋矿体中心面产状'
           descript: '块体模型赋矿体中心面产状'
           scl: 'p20036_块体模型赋矿体中心面产状.py'
@@ -327,7 +333,7 @@ root:
           descript: '赋最终境界'
           scl: 'p20092_赋最终境界.py'
 
-        child338:
+        p20094:
           text: '赋氧化原生'
           descript: '赋氧化原生'
           scl: 'p20094_赋氧化原生.py'
@@ -337,43 +343,57 @@ root:
           descript: '赋矿权范围'
           scl: 'p20100_赋矿权范围.py'
 
-        child340:
+        p20200:
           text: '距离反法估值报量'
           descript: '距离反法估值报量'
           scl: 'p20200_距离反法估值报量.py'
 
-        child341:
+        p20202:
           text: '克立格法估值报量'
           descript: '克立格法估值报量'
           scl: 'p20202_克立格估值报量.py'
-
     child33:
       text: '块模型检验'
       descript: '块体模型估值合理性检验'
       children:
-        child1110:
+        p20300:
           text: '品位吨位曲线'
           descript: '品位吨位曲线'
           scl: 'p20300_品位吨位曲线.py'
 
-        child1111:
+        p20500:
           text: '块模型趋势分析'
           descript: '块模型趋势分析'
           scl: 'p20500_块模型趋势分析.py'
 
-    child13:
+    paint:
       text: '绘图'
       descript: '绘制报告图件'
       children:
-        child131:
+        p40012:
           text: '绘地质剖面图'
           descript: '绘地质剖面图'
           scl: 'p40012_绘制剖面图new.py'
-        child133:
+
+        p40812:
           text: '绘制中段地质图'
           descript: '绘制中段地质图'
           scl: 'p40812_绘制中段地质图.py'
-    child14:
+
+    surpac_setting:
+      text: 'Surpac设置'
+      descript: 'Surpac设置'
+      children:
+        surpac_languages:
+          text: ' 语言选择'
+          descript: ' 语言选择'
+          scl: 'choice_language'
+        surpac_version:
+          text: ' 版本选择'
+          descript: ' 版本选择'
+          scl: 'choice_surpac'
+
+    m90000:
       text: '关于'
       descript: '关于'
       scl: 'SMGEOTBC:m90000_about.tcl'

@@ -3,12 +3,14 @@ import threading
 from socket import socket, AF_INET, SOCK_STREAM
 
 from py_path import Path
+from py_config import ConfigFactory
+from py_logging import LoggerFactory
 
 
 # Surpac通讯处理
 class SurpacSocketClient:
 
-    def __init__(self, config, logger, port: object):
+    def __init__(self, config: ConfigFactory, logger: LoggerFactory, port: object):
         self.HOST = 'localhost'
         self.BUFSIZ = 1024
         self.PORT = port
@@ -28,19 +30,21 @@ class SurpacSocketClient:
         self.tcpCliSock.close()
 
 
-class Tbc_script_thread(threading.Thread):
+class Tbc_script_worker(threading.Thread):
     def __init__(self, config, logger, port, msg):
-        super(Tbc_script_thread, self).__init__()
+        super(Tbc_script_worker, self).__init__()
         self.config = config
         self.logger = logger
-        self.scl_path = Path.resource_path(config.get('surpac', 'surpac_scl_path'))
+        self.scl_path = Path.get_resource_path(config.get('surpac', 'surpac_scl_path'))
         self.surpac_socket_client = SurpacSocketClient(config=config, logger=logger, port=port)
         self.msg = msg
 
     def run(self):
         # 结尾必须添加\n, 否则socket无法识别命令结束
-        tbcCommand = 'set status [SclFunction "RECALL ANY FILE" {file = "sclScript/%s" mode = "openInNewLayer"}]\n' % str(
-            self.msg)
+        tbcCommand = 'set status [SclFunction "RECALL ANY FILE" {file = "%s\\%s" mode = "openInNewLayer"}]\n' % (
+            self.scl_path, str(self.msg))
+        tbcCommand = str(tbcCommand).replace('\\', '\\\\')
+        self.logger.debug(tbcCommand)
         message = 'RCTL\n' + 'TCLSCRIPTBEGIN\n' + tbcCommand + ' TCLSCRIPTEND\n'
         result = self.surpac_socket_client.sendMsg(message)
         self.logger.debug('The TBC excute result:\n %s ' % result)
@@ -48,20 +52,21 @@ class Tbc_script_thread(threading.Thread):
         return result
 
 
-class Tcl_script_thread(threading.Thread):
+class Tcl_script_worker(threading.Thread):
     def __init__(self, config, logger, port, msg):
-        super(Tcl_script_thread, self).__init__()
+        super(Tcl_script_worker, self).__init__()
         self.config = config
         self.logger = logger
-        self.scl_path = config.get('surpac', 'surpac_scl_path')
+        self.scl_path = Path.get_resource_path(config.get('surpac', 'surpac_scl_path'))
         self.surpac_socket_client = SurpacSocketClient(config=config, logger=logger, port=port)
         self.msg = msg
 
     def run(self):
         # 结尾必须添加\n, 否则socket无法识别命令结束
-        tclCommand = 'set status [SclFunction "RECALL ANY FILE" {file = "%s/%s" mode = "openInNewLayer"}]\n' % (
+        tclCommand = 'set status [SclFunction "RECALL ANY FILE" {file = "%s\\%s" mode = "openInNewLayer"}]\n' % (
             self.scl_path, str(self.msg))
-        print(tclCommand)
+        tclCommand = str(tclCommand).replace('\\', '\\\\')
+        self.logger.debug(tclCommand)
         message = 'RCTL\n' + 'TCLSCRIPTBEGIN\n' + tclCommand + ' TCLSCRIPTEND\n'
         result = self.surpac_socket_client.sendMsg(message)
         self.logger.debug('The TCL excute result: %s ' % result)
@@ -69,12 +74,57 @@ class Tcl_script_thread(threading.Thread):
         return result
 
 
-class Py_script_thread(threading.Thread):
-    def __init__(self, config, logger, port, msg):
-        super(Py_script_thread, self).__init__()
+class Surpac_init_worker(threading.Thread):
+    def __init__(self, config, logger, port):
+
+        super(Surpac_init_worker, self).__init__()
         self.config = config
         self.logger = logger
-        self.scl_path = Path.resource_path(config.get('surpac', 'surpac_scl_path'))
+        self.scl_path = Path.get_resource_path(config.get('surpac', 'surpac_scl_path'))
+        self.surpac_socket_client = SurpacSocketClient(config=config, logger=logger, port=port)
+        self.msg = 'test_init.py'
+
+    def run(self):
+        # 结尾必须添加\n, 否则socket无法识别命令结束
+        tclCommand = 'set status [SclFunction "RECALL ANY FILE" {file = "%s\\%s" mode = "openInNewLayer"}]\n' % (
+            self.scl_path, str(self.msg))
+        tclCommand = str(tclCommand).replace('\\', '\\\\')
+        self.logger.debug(tclCommand)
+        message = 'RCTL\n' + 'TCLSCRIPTBEGIN\n' + tclCommand + ' TCLSCRIPTEND\n'
+        result = self.surpac_socket_client.sendMsg(message)
+        self.logger.debug('The Surpac Init excute result: %s ' % result)
+        self.surpac_socket_client.closeSocket()
+        return result
+
+
+class Surpac_changelanguage_worker(threading.Thread):
+    def __init__(self, config, logger, port, msg):
+        super(Surpac_changelanguage_worker, self).__init__()
+        self.config = config
+        self.logger = logger
+        self.scl_path = Path.get_resource_path(config.get('surpac', 'surpac_scl_path'))
+        self.surpac_socket_client = SurpacSocketClient(config=config, logger=logger, port=port)
+        self.msg = msg
+
+    def run(self):
+        # 结尾必须添加\n, 否则socket无法识别命令结束
+        tclCommand = 'set status [SclFunction "RECALL ANY FILE" {file = "%s\\%s" mode = "openInNewLayer"}]\n' % (
+            self.scl_path, str(self.msg))
+        tclCommand = str(tclCommand).replace('\\', '\\\\')
+        self.logger.debug(tclCommand)
+        message = 'RCTL\n' + 'TCLSCRIPTBEGIN\n' + tclCommand + ' TCLSCRIPTEND\n'
+        result = self.surpac_socket_client.sendMsg(message)
+        self.logger.debug('The TCL excute result: %s ' % result)
+        self.surpac_socket_client.closeSocket()
+        return result
+
+
+class Py_script_worker(threading.Thread):
+    def __init__(self, config, logger, port, msg):
+        super(Py_script_worker, self).__init__()
+        self.config = config
+        self.logger = logger
+        self.scl_path = Path.get_resource_path(config.get('surpac', 'surpac_scl_path'))
         self.surpac_socket_client = SurpacSocketClient(config=config, logger=logger, port=port)
         self.msg = msg
 
@@ -95,7 +145,7 @@ class Fun_script_worker(threading.Thread):
         super(Fun_script_worker, self).__init__()
         self.config = config
         self.logger = logger
-        self.scl_path = Path.resource_path(config.get('surpac', 'surpac_scl_path'))
+        self.scl_path = Path.get_resource_path(config.get('surpac', 'surpac_scl_path'))
         self.surpac_socket_client = SurpacSocketClient(config=config, logger=logger, port=port)
         self.msg = msg
 

@@ -3,10 +3,13 @@ import os
 
 from PySide2.QtWebEngineWidgets import QWebEngineSettings, QWebEngineView
 
+from py_config import ConfigFactory
+from py_logging import LoggerFactory
+
 
 class WebEngineView(QWebEngineView):
 
-    def __init__(self, tabWidget, config, logger):
+    def __init__(self, tabWidget, config: ConfigFactory, logger: LoggerFactory):
         super(WebEngineView, self).__init__()
         self.config = config
         self.logger = logger

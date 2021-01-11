@@ -15,7 +15,7 @@ from py_config import ConfigFactory
 from py_logging import LoggerFactory
 
 
-class Minesched():
+class MineschedWidget():
     def __init__(self, config, logger):
         self.logger = logger
         self.config = config
@@ -128,10 +128,10 @@ class Minesched():
 
 if __name__ == '__main__':
     # 设置配置文件和日志
-    config = ConfigFactory(config='py_platform.ini').getConfig()
+    config = ConfigFactory(config_file='py_platform.ini').getConfig()
     logger = LoggerFactory(config=config).getLogger()
 
-    minesched = Minesched(config=config, logger=logger)
+    minesched = MineschedWidget(config=config, logger=logger)
     minesched_pid = minesched.startProcess(
         cmd='C:/Program Files/Dassault Systemes/GEOVIA MineSched/9.2.0/MineSched.exe')
     logger.debug(minesched_pid)

@@ -1,7 +1,7 @@
 import os
 import os.path
 import sys
-
+import pkgutil
 
 class Path():
 
@@ -20,6 +20,7 @@ class Path():
     def filenameIsContains(self, fullPathFileName: str, strs):
         filename = Path.splitFullPathFileName(fullPathFileName).get('filename').lower()
         result = True
+
         for str in strs:
             result = filename.__contains__(str.lower()) and result
         return result
@@ -32,7 +33,7 @@ class Path():
             print('The Path is not exist. Created (%s).' % outputPath)
 
     @classmethod
-    def resource_path(self, relative_path: str):
+    def get_resource_path(self, relative_path: str):
         if getattr(sys, 'frozen', False):
             base_path = sys._MEIPASS
         else:
