@@ -5,7 +5,6 @@ from py_config import ConfigFactory
 from py_logging import LoggerFactory
 from py_master_widget import MasterWidget
 from py_minesched_widget import MineschedWidget
-from py_shortcuts import ShortCuts
 from py_tab_widget import TabWidget
 from py_web_widget import WebEngineView
 from py_whittle_widget import WhittleWidget
