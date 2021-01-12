@@ -1,4 +1,5 @@
 from PySide2.QtCore import QUrl
+from PySide2.QtGui import QFont
 from PySide2.QtWidgets import *
 
 from py_config import ConfigFactory
@@ -23,6 +24,9 @@ class MainWindow(QMainWindow):
 
         # tab_widget界面组件
         tab_widget = TabWidget()
+        font = tab_widget.tabBar().font()
+        font.setPointSize(18)
+        tab_widget.tabBar().setFont(font)
 
         # 构建index_widget界面组件
         index_widget = WebEngineView(config=config, logger=logger, tabWidget=tab_widget)
@@ -38,11 +42,11 @@ class MainWindow(QMainWindow):
         # 指定tab不显示关闭按钮
         tab_widget.tabBar().setTabButton(1, QTabBar.RightSide, None)
 
-        # treejs_widget
-        treejs_widget = WebEngineView(config=config, logger=logger, tabWidget=tab_widget)
-        treejs_widget.load(QUrl(config.get('threejs', 'threejs_url')))
+        # threejs_widget
+        threejs_widget = WebEngineView(config=config, logger=logger, tabWidget=tab_widget)
+        threejs_widget.load(QUrl(config.get('threejs', 'threejs_url')))
         threejs_tag_title = config.get('threejs', 'threejs_tag_title')
-        tab_widget.addTabItem(widget=treejs_widget, item_title=threejs_tag_title, index=2)
+        tab_widget.addTabItem(widget=threejs_widget, item_title=threejs_tag_title, index=2)
         # 指定tab不显示关闭按钮
         tab_widget.tabBar().setTabButton(2, QTabBar.RightSide, None)
 
@@ -86,6 +90,9 @@ class MainWindow(QMainWindow):
         # 指定当前tab
         index_tab = config.getint('default', 'index_tab')
         tab_widget.setCurrentIndex(index_tab)
+        tab_widget.tabBar().font().setBold(True)
+        
+        tab_widget.update()
 
         # 在窗口中央显示tab
         self.setCentralWidget(tab_widget)
