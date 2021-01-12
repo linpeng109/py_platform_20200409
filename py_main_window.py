@@ -28,16 +28,17 @@ class MainWindow(QMainWindow):
         font.setPointSize(18)
         tab_widget.tabBar().setFont(font)
 
-        # 构建index_widget界面组件
-        index_widget = WebEngineView(config=config, logger=logger, tabWidget=tab_widget)
-        index_widget.load(QUrl(config.get('index', 'index_url')))
-        index_tag_title = config.get('index', 'index_tag_title')
-        tab_widget.addTabItem(widget=index_widget, item_title=index_tag_title, index=0)
+
+        # 构建web_widget界面组件
+        web_widget = WebEngineView(config=config, logger=logger, tabWidget=tab_widget)
+        web_widget.load(QUrl(config.get('web', 'web_url')))
+        web_tag_title = config.get('web', 'web_tag_title')
+        tab_widget.addTabItem(widget=web_widget, item_title=web_tag_title, index=0)
         tab_widget.tabBar().setTabButton(0, QTabBar.RightSide, None)
 
         # 构建master_widget界面组件
         self.master_widget = MasterWidget(config=config, logger=logger)
-        master_tag_title = config.get('surpac', 'surpac_tag_title')
+        master_tag_title = config.get('master', 'master_tag_title')
         tab_widget.addTabItem(widget=self.master_widget, item_title=master_tag_title, index=1)
         # 指定tab不显示关闭按钮
         tab_widget.tabBar().setTabButton(1, QTabBar.RightSide, None)
@@ -71,7 +72,7 @@ class MainWindow(QMainWindow):
         else:
             self.logger.debug('minesched is not found')
 
-        # whittle_widget
+        # 生成whittle_widget界面组件
         self.whittle = WhittleWidget(config=config, logger=logger)
         whittle_cmd_list = []
         if self.whittle.check_whittle_location_config():
@@ -90,8 +91,8 @@ class MainWindow(QMainWindow):
         # 指定当前tab
         index_tab = config.getint('default', 'index_tab')
         tab_widget.setCurrentIndex(index_tab)
-        tab_widget.tabBar().font().setBold(True)
-        
+        # tab_widget.tabBar().font().setBold(True)
+
         tab_widget.update()
 
         # 在窗口中央显示tab

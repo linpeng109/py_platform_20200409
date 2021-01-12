@@ -26,14 +26,14 @@ class MasterWidget(QSplitter):
         self.surpac = Surpac(config=config, logger=logger)
 
         # 销毁所有surpac2名称的进程
-        if (config.get('surpac', 'surpac_kill_other_process')):
+        if (config.get('master', 'surpac_kill_other_process')):
             pids = self.surpac.getPidsFromPName('surpac2')
             self.surpac.killProcess(pids)
 
         # 读取配置文件，检查surpac是否已经正确配置
         if (self.check_surpac_location_config()):
             # 如果surpac配置正确，则根据配置文件获取surpac启动命令
-            self.surpac_cmd_list = [self.config.get('surpac', 'surpac_location')]
+            self.surpac_cmd_list = [self.config.get('master', 'surpac_location')]
             self.start_surpac_listener(self.surpac_cmd_list[0])
         else:
             # 如果配置不正确，则从系统快捷方式获取surpac命令行列表
@@ -48,7 +48,7 @@ class MasterWidget(QSplitter):
 
     # 获取surpac配置地址
     def check_surpac_location_config(self):
-        surpac_location = self.config.get('surpac', 'surpac_location')
+        surpac_location = self.config.get('master', 'surpac_location')
         return os.path.isfile(surpac_location)
 
     # 语言选择信号接收槽

@@ -22,7 +22,8 @@ class ChoiceLanguageDialog(QDialog):
         self.choice_language_button_group.setExclusive(True)
         layout = QVBoxLayout()
         for id, language in enumerate(languages):
-            language_item = QRadioButton(language)
+            # 显示语言提示
+            language_item = QRadioButton(language.split(':')[0])
             self.choice_language_button_group.addButton(language_item)
             self.choice_language_button_group.setId(language_item, id)
             if id == 0:
@@ -39,8 +40,10 @@ class ChoiceLanguageDialog(QDialog):
     def accept(self):
         # 先关闭对话框，然后发送消息
         super(ChoiceLanguageDialog, self).accept()
-        self.choices_language_dialog_signal.emit(self.languages[self.language_id])
-        self.config.setConfig('surpac', 'surpac_scl_cfg', self.languages[self.language_id])
+        # 发送语言文件
+        language = self.languages[self.language_id].split(':')[1]
+        self.choices_language_dialog_signal.emit(language)
+        self.config.setConfig('master', 'surpac_language_cfg', language)
 
     def languageChange(self):
         self.language_id = self.choice_language_button_group.checkedId()

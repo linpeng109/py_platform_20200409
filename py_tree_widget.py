@@ -21,13 +21,13 @@ class TreeWidget(QTreeWidget):
         super(TreeWidget, self).__init__()
         self.config = config
         self.logger = logger
-        surpac_scl_cfg = self.config.get('surpac', 'surpac_scl_cfg')
+        surpac_scl_cfg = self.config.get('master', 'surpac_language_cfg')
         self.treeWidget_load(surpac_scl_cfg=surpac_scl_cfg)
         self.shortcut = ShortCuts(config=self.config, logger=self.logger)
         surpacs = self.shortcut.getSurpacCmdList()
         self.choice_surpac_dialog = ChoiceSurpacDialog(config=self.config, logger=self.logger, title='请选择Surpac版本',
                                                        surpacs=surpacs)
-        surpac_languages = str(self.config.get('surpac', 'surpac_languages')).split(';')
+        surpac_languages = str(self.config.get('master', 'surpac_languages')).split(';')
         self.choice_language_dialog = ChoiceLanguageDialog(config=config, logger=logger, title="请选择Surpac语言",
                                                            languages=surpac_languages)
 
@@ -77,7 +77,7 @@ class TreeWidget(QTreeWidget):
                 item = QTreeWidgetItem()
 
                 item_font = QFont()
-                item_font.setPointSize(self.config.getint('surpac', 'item_font_size'))
+                item_font.setPointSize(self.config.getint('master', 'master_item_font_size'))
                 try:
                     text = str(menu_dict[key]['text'])
                     item.setText(0, text)
@@ -107,14 +107,14 @@ class TreeWidget(QTreeWidget):
 
                 root.addChild(item)
 
-        surpac_scl_encoding = self.config.get('surpac', 'surpac_scl_encoding')
+        surpac_scl_encoding = self.config.get('master', 'surpac_scl_encoding')
         menus = []
         with open(file=surpac_scl_cfg, encoding=surpac_scl_encoding) as _f:
             menu_dict = yaml.load(_f, yaml.loader.FullLoader)
             for key in menu_dict:
                 menu_toplevel_item = QTreeWidgetItem()
                 menu_toplevel_item_font = QFont()
-                menu_toplevel_item_font.setPointSize(self.config.getint('surpac', 'root_font_size'))
+                menu_toplevel_item_font.setPointSize(self.config.getint('master', 'master_root_font_size'))
 
                 try:
                     text = str(menu_dict[key]['text'])

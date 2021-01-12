@@ -35,7 +35,7 @@ class Tbc_script_worker(threading.Thread):
         super(Tbc_script_worker, self).__init__()
         self.config = config
         self.logger = logger
-        self.scl_path = Path.get_resource_path(config.get('surpac', 'surpac_scl_path'))
+        self.scl_path = Path.get_resource_path(config.get('master', 'surpac_scl_path'))
         self.surpac_socket_client = SurpacSocketClient(config=config, logger=logger, port=port)
         self.msg = msg
 
@@ -102,7 +102,7 @@ class Surpac_changelanguage_worker(threading.Thread):
         super(Surpac_changelanguage_worker, self).__init__()
         self.config = config
         self.logger = logger
-        self.scl_path = Path.get_resource_path(config.get('surpac', 'surpac_scl_path'))
+        self.scl_path = Path.get_resource_path(config.get('master', 'surpac_scl_path'))
         self.surpac_socket_client = SurpacSocketClient(config=config, logger=logger, port=port)
         self.msg = msg
 
