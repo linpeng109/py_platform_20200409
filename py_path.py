@@ -1,7 +1,7 @@
 import os
 import os.path
 import sys
-import pkgutil
+
 
 class Path():
 

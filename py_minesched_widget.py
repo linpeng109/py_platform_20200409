@@ -13,12 +13,29 @@ from PySide2.QtWidgets import QWidget
 # 生成minesched工作区widget
 from py_config import ConfigFactory
 from py_logging import LoggerFactory
+from py_shortcuts import ShortCuts
+from py_start_minesched_dialog import StartMineSchedDialog
 
 
 class MineschedWidget():
     def __init__(self, config, logger):
         self.logger = logger
         self.config = config
+        self.shortCut = ShortCuts(config=config, logger=logger)
+        # 是否kill当前环境中所有已经启动的minesched进程
+        if self.config.get('minesched', 'minesched_kill_other_process'):
+            pids = self.getPidsFromPName('MineSched')
+            self.killProcess(pids=pids)
+        self.minesched_cmd_list = []
+        # 检查minesched路径是否配置正确
+        if self.check_minesched_location_config():
+            self.minesched_cmd_list = [self.config.get('minesched', 'minesched_location')]
+        else:
+            self.minesched_cmd_list = self.shortCut.getMineSchedCmdList()
+            self.startMineSchedDialog = StartMineSchedDialog(config=config, logger=logger, title='请选择MineSched版本',
+                                                             minescheds=self.minesched_cmd_list)
+            # self.startMineSchedDialog.minescheds = self.minesched_cmd_list
+            self.startMineSchedDialog.show()
 
     # 启动执行文件返回进程pid
     def startProcess(self, cmd):
@@ -61,8 +78,8 @@ class MineschedWidget():
         _lines = _result.stdout.readlines()
         pids = []
         for pid in _lines:
-            begin = str(pid).index('surpac2.exe') + 11
-            end = begin + 24
+            begin = str(pid).index('MineSched.exe') + 13
+            end = begin + 22
             pids.append(str(pid)[begin:end].strip())
         return pids
 
@@ -120,7 +137,6 @@ class MineschedWidget():
     def build_minesched_widget(self, cmd: str):
         self.minesched_pid = self.startProcess(cmd)
         hwnd = self.getTheMainWindow(pid=self.minesched_pid, spTitle='MineSched')
-        # self.surpac_ports = self.getPortsFromPid(pid=self.minesched_pid)
         self.minesched_widget = self.convertWndToWidget(hwnd=hwnd)
         return self.minesched_widget, self.minesched_pid
 
@@ -136,10 +152,13 @@ if __name__ == '__main__':
     logger = LoggerFactory(config=config).getLogger()
 
     minesched = MineschedWidget(config=config, logger=logger)
-    minesched_pid = minesched.startProcess(
-        cmd='C:/Program Files/Dassault Systemes/GEOVIA MineSched/9.2.0/MineSched.exe')
-    logger.debug(minesched_pid)
-    minesched_hwnd = minesched.getTheMainWindow(pid=minesched_pid, spTitle='MineSched')
-    logger.debug(minesched_hwnd)
-    minesched_widget = minesched.convertWndToWidget(hwnd=minesched_hwnd)
-    logger.debug(minesched_widget.__class__)
+    pids = minesched.getPidsFromPName('MineSched')
+    logger.debug(pids)
+    minesched.killProcess(pids=pids)
+    # minesched_pid = minesched.startProcess(
+    #     cmd='C:/Program Files/Dassault Systemes/GEOVIA MineSched/9.2.0/MineSched.exe')
+    # logger.debug(minesched_pid)
+    # minesched_hwnd = minesched.getTheMainWindow(pid=minesched_pid, spTitle='MineSched')
+    # logger.debug(minesched_hwnd)
+    # minesched_widget = minesched.convertWndToWidget(hwnd=minesched_hwnd)
+    # logger.debug(minesched_widget.__class__)

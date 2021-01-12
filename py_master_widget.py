@@ -3,7 +3,7 @@ import os
 from PySide2.QtCore import Qt, Slot
 from PySide2.QtWidgets import QSplitter, QWidget, QVBoxLayout
 
-from py_communite import Surpac_changelanguage_worker, Surpac_init_worker
+from py_communite import Surpac_changelanguage_worker
 from py_communite import Tbc_script_worker, Tcl_script_worker, Py_script_worker, Fun_script_worker
 from py_config import ConfigFactory
 from py_logging import LoggerFactory
@@ -54,7 +54,6 @@ class MasterWidget(QSplitter):
     # 语言选择信号接收槽
     @Slot(str)
     def change_language_listener(self, result):
-        self.logger.debug("====" + result)
         self.tree_widget.treeWidget_load(result)
         # 命令与执行脚本对应(待优化)
         if ('_cn' in result):
@@ -66,21 +65,20 @@ class MasterWidget(QSplitter):
                                                   msg='test_language_en.tcl')
             client.start()
 
+    # Surpac启动信号接收槽
     @Slot(str)
     def start_surpac_listener(self, result):
         # 构建surpac界面widget
         self.surpac_widget, self.surpac_ports, self.surpac_pid = self.surpac.build_surpac_widget(result)
-        # surpac_init_worker = Surpac_init_worker(config=self.config, logger=self.logger, port=self.surpac_ports[0])
-        # surpac_init_worker.start()
 
-        # right_widget配置
-        right_widget = QWidget()
-        right_widget_layout = QVBoxLayout()
-        right_widget.setLayout(right_widget_layout)
+        # Menu_widget配置
+        menu_widget = QWidget()
+        menu_widget_layout = QVBoxLayout()
+        menu_widget.setLayout(menu_widget_layout)
 
         # 构建tree界面widget
         self.tree_widget = TreeWidget(config=self.config, logger=self.logger, port=self.surpac_ports[0])
-        right_widget_layout.addWidget(self.tree_widget)
+        menu_widget_layout.addWidget(self.tree_widget)
 
         # 将改变surpac版本的消息与surpac更改监听器关联
         self.tree_widget.choice_surpac_dialog.choices_surpac_signal.connect(self.change_surpac_listener)
@@ -94,7 +92,7 @@ class MasterWidget(QSplitter):
 
         # 在工作区中加入surpac和right组件
         self.addWidget(self.surpac_widget)
-        self.addWidget(right_widget)
+        self.addWidget(menu_widget)
 
     # Surpac版本选择信号接收槽
     @Slot(str)
