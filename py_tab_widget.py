@@ -20,10 +20,6 @@ class TabWidget(QTabWidget):
         layout.addWidget(widget)
         item_widget.setLayout(layout)
         self.addTab(item_widget, item_title)
-        # if (index == -1):
-        #     self.addTab(item_widget, item_title)
-        # else:
-        #     self.insertTab(index=index, widget=item_widget, label=item_title, )
         self.setCurrentWidget(item_widget)
 
     def closeTabItem(self, index: int):

@@ -1,134 +1,43 @@
 # encoding:utf-8
 import os
-import signal
-import subprocess
-import time
 
-import win32con
-import win32gui
-import win32process
-from PySide2.QtGui import QWindow
-from PySide2.QtWidgets import QWidget
+from PySide2.QtCore import Slot
 
 # 生成whillte工作区widget
 from py_config import ConfigFactory
 from py_logging import LoggerFactory
+from py_pywin32 import PY_Win32
+from py_shortcuts import ShortCuts
+from py_start_whittle_dialog import StartWhittleDialog
 
 
 class WhittleWidget():
-    def __init__(self, config, logger):
+    def __init__(self, config: ConfigFactory, logger: LoggerFactory):
         self.logger = logger
         self.config = config
+        self.py_win32 = PY_Win32(logger=logger, config=config)
 
-    # 启动执行文件返回进程pid
-    def startProcess(self, cmd):
-        pid = subprocess.Popen(cmd, stdout=subprocess.PIPE,
-                               stdin=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True).pid
-        self.pid = pid
-        return pid
+        # 生成版本选择窗口
+        self.startWhittleDialog = StartWhittleDialog(config=config, logger=logger, title='请选择Whittle版本')
+        # self.startWhittleDialog.start_whittle_signal.connect(self.star_whittle_listener)
 
-    # 从指定pid获取窗口句柄（通过回调函数）
-    def getHwndFromPid(self, pid):
+        # 是否kill当前环境中所有已经启动的whittle进程
+        if self.config.get('whittle', 'whittle_kill_other_process'):
+            pids = self.py_win32.getPidsFromPName(pname='Whittle', indexName='Whittle.exe', begin=11, end=24)
+            self.py_win32.killProcess(pids=pids)
 
-        def callback(hwnd, hwnds):
-            if win32gui.IsWindowVisible(hwnd) and win32gui.IsWindowEnabled(hwnd):
-                _, found_pid = win32process.GetWindowThreadProcessId(hwnd)
-                if found_pid == pid:
-                    # self.logger.debug(win32gui.GetWindowText(hwnd))
-                    hwnds.append(hwnd)
-            return True
-
-        hwnds = []
-        win32gui.EnumWindows(callback, hwnds)
-        return hwnds
-
-    # 通过pid获取包含指定窗口特征名的窗口句柄
-    def getTheMainWindow(self, pid, spTitle):
-        hwnds = []
-        while True:
-            hwnds = self.getHwndFromPid(pid)
-            if (len(hwnds) > 0):
-                _title = win32gui.GetWindowText((hwnds[0]))
-                if (spTitle in _title):
-                    break
-            time.sleep(1)
-        return hwnds[0]
-
-    # 从指定名称获取进程的pid数组
-    def getPidsFromPName(self, pname: str):
-        _result = subprocess.Popen("tasklist|findstr " + pname, shell=True, stdout=subprocess.PIPE,
-                                   stdin=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True)
-        _lines = _result.stdout.readlines()
-        pids = []
-        for pid in _lines:
-            begin = str(pid).index('surpac2.exe') + 11
-            end = begin + 24
-            pids.append(str(pid)[begin:end].strip())
-        return pids
-
-    # 根据pid获取运行端口
-    def getPortsFromPid(self, pid):
-        io = subprocess.Popen("netstat -aon|findstr " + str(pid), shell=True, stdout=subprocess.PIPE,
-                              stderr=subprocess.PIPE, stdin=subprocess.PIPE, close_fds=True)
-        lines = io.stdout.readlines()
-        self.ports = []
-        for line in lines:
-            if 'LISTENING' in str(line):
-                begin = str(line).index('0.0.0.0:') + 8
-                end = begin + 15
-                port = int(str(line)[begin:end].strip())
-                self.ports.append(port)
-        return self.ports
-
-    # 关闭列出的所有进程id号的进程
-    def killProcess(self, pids):
-        for pid in pids:
-            _pid = int(pid)
-            try:
-                os.kill(_pid, signal.SIGTERM)
-                self.logger.debug('Process(pid=%s) has be killed' % pid)
-            except OSError:
-                self.logger.debug('no such process(pid=%s)' % pid)
-
-    # 显示窗口
-    def showWindow(self, hwnd):
-        win32gui.ShowWindow(hwnd, win32con.SW_SHOW)
-
-    # 隐含窗口
-    def hiddenWindow(self, hwnd):
-        win32gui.ShowWindow(hwnd, win32con.SW_HIDE)
-
-    # 关闭窗口
-    def closeWindow(self, hwnd):
-        win32gui.PostMessage(hwnd, win32con.WM_CLOSE)
-
-    # 设置窗口样式
-    def setNoTitleWindow(self, hwnd):
-        ISTYLE = win32gui.GetWindowLong(hwnd, win32con.GWL_STYLE)
-        win32gui.SetWindowLong(hwnd,
-                               ISTYLE &
-                               ~win32con.WS_CAPTION &
-                               win32con.SWP_NOMOVE &
-                               win32con.SWP_NOSIZE)
-
-    # 将一个窗口句柄转化为一个标准Widget
-    def convertWndToWidget(self, hwnd):
-        native_wnd = QWindow.fromWinId(hwnd)
-        return QWidget.createWindowContainer(native_wnd)
+    # 生成Whittle工作区widget
+    def build_whittle_widget(self, cmd: str):
+        # self.killProcess([self.pid])
+        self.whittle_pid = self.py_win32.startProcess(cmd)
+        hwnd = self.py_win32.getTheMainWindow(pid=self.whittle_pid, spTitle='Whittle')
+        self.whittle_widget = self.py_win32.convertWndToWidget(hwnd=hwnd)
+        return self.whittle_widget, self.whittle_pid
 
     # 检查whittle配置是否正确
     def check_whittle_location_config(self):
         whittle_location = self.config.get('whittle', 'whittle_location')
         return os.path.isfile(whittle_location)
-
-    # 生成Whittle工作区widget
-    def build_whittle_widget(self, cmd: str):
-        # self.killProcess([self.pid])
-        self.whittle_pid = self.startProcess(cmd)
-        hwnd = self.getTheMainWindow(pid=self.whittle_pid, spTitle='Whittle')
-        # self.surpac_ports = self.getPortsFromPid(pid=self.minesched_pid)
-        self.whittle_widget = self.convertWndToWidget(hwnd=hwnd)
-        return self.whittle_widget, self.whittle_pid
 
 
 if __name__ == '__main__':

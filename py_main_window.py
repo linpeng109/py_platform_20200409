@@ -5,8 +5,8 @@ from py_config import ConfigFactory
 from py_logging import LoggerFactory
 from py_master_widget import MasterWidget
 from py_minesched_widget import MineschedWidget
+from py_pywin32 import PY_Win32
 from py_shortcuts import ShortCuts
-from py_start_minesched_dialog import StartMineSchedDialog
 from py_tab_widget import TabWidget
 from py_web_widget import WebEngineView
 from py_whittle_widget import WhittleWidget
@@ -21,6 +21,8 @@ class MainWindow(QMainWindow):
         self.logger = logger
         self.setWindowTitle(config.get('default', 'title'))
         self.resize(self.config.getint('default', 'width'), self.config.getint('default', 'height'))
+        self.py_win32 = PY_Win32(logger=logger, config=config)
+        self.short_cuts = ShortCuts(logger=logger, config=config)
 
         # tab_widget界面组件
         self.tab_widget = TabWidget()
@@ -50,33 +52,33 @@ class MainWindow(QMainWindow):
         # 指定tab不显示关闭按钮
         self.tab_widget.tabBar().setTabButton(2, QTabBar.RightSide, None)
 
-        # 生成快捷方式读取对象
-        self.short_cuts = ShortCuts(config=config, logger=logger)
-
         # 生成minesched_widget组件
         self.minesched = MineschedWidget(config=self.config, logger=self.logger)
         self.minesched.startMineSchedDialog.start_minesched_signal.connect(self.star_minesched_listener)
+        # 检查minesched路径是否配置正确
+        self.minesched_cmd_list = []
+        if self.minesched.check_minesched_location_config():
+            self.minesched_cmd_list = [self.config.get('minesched', 'minesched_location')]
+            self.star_minesched_listener(result=self.minesched_cmd_list[0])
+        else:
+            self.minesched.startMineSchedDialog.setMinescheds(self.short_cuts.getMineSchedCmdList())
+            self.minesched.startMineSchedDialog.show()
 
         # 生成whittle_widget界面组件
         self.whittle = WhittleWidget(config=config, logger=logger)
-        whittle_cmd_list = []
+        self.whittle.startWhittleDialog.start_whittle_signal.connect(self.star_whittle_listener)
+        # 检查mwhittle路径是否配置正确
+        self.whittle_cmd_list = []
         if self.whittle.check_whittle_location_config():
-            whittle_cmd_list.append(config.get('whittle', 'whittle_location'))
+            self.whittle_cmd_list = [self.config.get('whittle', 'whittle_location')]
+            self.star_whittle_listener(result=self.whittle_cmd_list[0])
         else:
-            whittle_cmd_list = self.short_cuts.getWhittleCmdList()
-        if len(whittle_cmd_list) > 0:
-            self.whittle_widget, self.whittle_pid = self.whittle.build_whittle_widget(whittle_cmd_list[0])
-            whittle_tag_title = config.get('whittle', 'whittle_tag_title')
-            self.tab_widget.addTabItem(widget=self.whittle_widget, item_title=whittle_tag_title, index=4)
-            # 指定tab不显示关闭按钮
-            self.tab_widget.tabBar().setTabButton(4, QTabBar.RightSide, None)
-        else:
-            self.logger.debug('whittle is not found')
+            self.whittle.startWhittleDialog.setWhittles(self.short_cuts.getWhittleCmdList())
+            self.whittle.startWhittleDialog.show()
 
         # 指定当前tab
         index_tab = config.getint('default', 'index_tab')
         self.tab_widget.setCurrentIndex(index_tab)
-        # tab_widget.tabBar().font().setBold(True)
 
         self.tab_widget.update()
 
@@ -85,14 +87,20 @@ class MainWindow(QMainWindow):
 
     @Slot(str)
     def star_minesched_listener(self, result):
-        if len(result) > 0:
-            self.minesched_widget, self.minesched_pid = self.minesched.build_minesched_widget(result)
-            minesched_tag_title = self.config.get('minesched', 'minesched_tag_title')
-            self.tab_widget.addTabItem(widget=self.minesched_widget, item_title=minesched_tag_title, index=3)
-            # 指定tab不显示关闭按钮
-            self.tab_widget.tabBar().setTabButton(3, QTabBar.RightSide, None)
-        else:
-            self.logger.debug('minesched is not found')
+        self.minesched_cmd_list = [result]
+        self.mineched_widget, self.minesched_pid = self.minesched.build_minesched_widget(self.minesched_cmd_list[0])
+        minesched_tag_title = self.config.get('minesched', 'minesched_tag_title')
+        self.tab_widget.addTabItem(widget=self.mineched_widget, item_title=minesched_tag_title, index=3)
+        self.tab_widget.tabBar().setTabButton(3, QTabBar.RightSide, None)
+
+    @Slot(str)
+    def star_whittle_listener(self, result):
+        self.whittle_cmd_list = [result]
+        self.whittle_widget, self.whittle_pid = self.whittle.build_whittle_widget(self.whittle_cmd_list[0])
+        whittle_tag_title = self.config.get('whittle', 'whittle_tag_title')
+        self.tab_widget.addTabItem(widget=self.whittle_widget, item_title=whittle_tag_title, index=4)
+        self.tab_widget.tabBar().setTabButton(4, QTabBar.RightSide, None)
+
 
     # 窗口关闭
     def closeEvent(self, event):
@@ -103,11 +111,11 @@ class MainWindow(QMainWindow):
             surpac_id = self.master_widget.surpac.surpac_pid
             # 如果surpac已经启动，则清除surpac进程
             if surpac_id > 0:
-                self.master_widget.surpac.killProcess([surpac_id])
+                self.py_win32.killProcess([surpac_id])
             if self.whittle_pid > 0:
-                self.whittle.killProcess([self.whittle_pid])
+                self.py_win32.killProcess([self.whittle_pid])
             if self.minesched_pid > 0:
-                self.minesched.killProcess([self.minesched_pid])
+                self.py_win32.killProcess([self.minesched_pid])
             super().closeEvent(event)
         else:
             event.ignore()
