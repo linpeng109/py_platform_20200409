@@ -19,4 +19,3 @@ class SurpacSocketClient:
 
     def closeSocket(self):
         self.tcpCliSock.close()
-

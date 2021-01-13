@@ -101,7 +101,6 @@ class MainWindow(QMainWindow):
         self.tab_widget.addTabItem(widget=self.whittle_widget, item_title=whittle_tag_title, index=4)
         self.tab_widget.tabBar().setTabButton(4, QTabBar.RightSide, None)
 
-
     # 窗口关闭
     def closeEvent(self, event):
         replay = QMessageBox.question(self, '操作提示', '是否退出应用？', QMessageBox.Yes | QMessageBox.No, QMessageBox.No)

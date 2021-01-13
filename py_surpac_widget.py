@@ -1,142 +1,44 @@
 # encoding:utf-8
 import os
-import signal
-import subprocess
-import time
 
-import win32con
-import win32gui
-import win32process
-from PySide2.QtGui import QWindow
-from PySide2.QtWidgets import QWidget
-
-# 生成surpac工作区widget
-from py_path import Path
+# 生成surpac工作区
+from py_config import ConfigFactory
+from py_logging import LoggerFactory
+from py_pywin32 import PY_Win32
 from py_shortcuts import ShortCuts
+from py_start_surpac_dialog import StartSurpacDialog
 
 
 class Surpac():
-
-    def __init__(self, config, logger):
+    def __init__(self, config: ConfigFactory, logger: LoggerFactory):
         self.logger = logger
         self.config = config
-        self.shortcuts = ShortCuts(config=config, logger=logger)
         self.surpac_pid = -1
+        self.shortcuts = ShortCuts(config=config, logger=logger)
+        self.py_win32 = PY_Win32(config=config, logger=logger)
 
-    # 启动执行文件返回进程pid
-    def startProcess(self, cmd):
-        pid = subprocess.Popen(cmd, stdout=subprocess.PIPE,
-                               stdin=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True).pid
-        self.pid = pid
-        return pid
+        # 生成surpac不同版本选择窗口
+        self.startSurpacDialog = StartSurpacDialog(config=config, logger=logger, title='请选择Surpac版本')
 
-    # 从指定pid获取窗口句柄（通过回调函数）
-    def getHwndFromPid(self, pid):
-
-        def callback(hwnd, hwnds):
-            if win32gui.IsWindowVisible(hwnd) and win32gui.IsWindowEnabled(hwnd):
-                _, found_pid = win32process.GetWindowThreadProcessId(hwnd)
-                if found_pid == pid:
-                    # self.logger.debug(win32gui.GetWindowText(hwnd))
-                    hwnds.append(hwnd)
-            return True
-
-        hwnds = []
-        win32gui.EnumWindows(callback, hwnds)
-        return hwnds
-
-    # 通过pid获取包含指定窗口特征名的窗口句柄
-    def getTheMainWindow(self, pid, spTitle):
-        hwnds = []
-        while True:
-            hwnds = self.getHwndFromPid(pid)
-            if (len(hwnds) > 0):
-                _title = win32gui.GetWindowText((hwnds[0]))
-                if (spTitle in _title):
-                    break
-            time.sleep(1)
-        return hwnds[0]
-
-    # 从指定名称获取进程的pid数组
-    def getPidsFromPName(self, pname: str):
-        _result = subprocess.Popen("tasklist|findstr " + pname, shell=True, stdout=subprocess.PIPE,
-                                   stdin=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True)
-        _lines = _result.stdout.readlines()
-        pids = []
-        for pid in _lines:
-            begin = str(pid).index('surpac2.exe') + 11
-            end = begin + 24
-            pids.append(str(pid)[begin:end].strip())
-        return pids
-
-    # 根据pid获取运行端口
-    def getPortsFromPid(self, pid):
-        io = subprocess.Popen("netstat -aon|findstr " + str(pid), shell=True, stdout=subprocess.PIPE,
-                              stderr=subprocess.PIPE, stdin=subprocess.PIPE, close_fds=True)
-        lines = io.stdout.readlines()
-        self.ports = []
-        for line in lines:
-            if 'LISTENING' in str(line):
-                begin = str(line).index('0.0.0.0:') + 8
-                end = begin + 15
-                port = int(str(line)[begin:end].strip())
-                self.ports.append(port)
-        return self.ports
-
-    # 关闭列出的所有进程id号的进程
-    def killProcess(self, pids):
-        for pid in pids:
-            _pid = int(pid)
-            try:
-                os.kill(_pid, signal.SIGTERM)
-                self.logger.debug('Process(pid=%s) has be killed' % pid)
-            except OSError:
-                self.logger.debug('no such process(pid=%s)' % pid)
-
-    # 显示窗口
-    def showWindow(self, hwnd):
-        win32gui.ShowWindow(hwnd, win32con.SW_SHOW)
-
-    # 隐含窗口
-    def hiddenWindow(self, hwnd):
-        win32gui.ShowWindow(hwnd, win32con.SW_HIDE)
-
-    # 关闭窗口
-    def closeWindow(self, hwnd):
-        win32gui.PostMessage(hwnd, win32con.WM_CLOSE)
-
-    # 设置窗口样式
-    def setNoTitleWindow(self, hwnd):
-        ISTYLE = win32gui.GetWindowLong(hwnd, win32con.GWL_STYLE)
-        win32gui.SetWindowLong(hwnd,
-                               ISTYLE &
-                               ~win32con.WS_CAPTION &
-                               win32con.SWP_NOMOVE &
-                               win32con.SWP_NOSIZE)
-
-    # 将一个窗口句柄转化为一个标准Widget
-    def convertWndToWidget(self, hwnd):
-        native_wnd = QWindow.fromWinId(hwnd)
-        return QWidget.createWindowContainer(native_wnd)
-
-    # 获取surpac的安装路径列表（surpac可以安装多个版本）
-    def getSurpacCmdList(self):
-        surpac_cmd_list = []
-        lnk_list = os.listdir(self.shortcuts.PROGRAM_DATA_PATH)
-        for lnk in lnk_list:
-            lnk_file = os.path.join(self.shortcuts.PROGRAM_DATA_PATH, lnk)
-            if Path.filenameIsContains(lnk_file, 'surpac'):
-                result = self.shortcuts.resolve_shortcut(lnk_file)
-                if '_x64' in result:
-                    result = result.replace('Program Files (x86)', 'Program Files')
-                surpac_cmd_list.append(result)
-        return surpac_cmd_list
+        # 清理旧surpac进程
+        if self.config.get('master', 'surpac_kill_other_process'):
+            pids = self.py_win32.getPidsFromPName(pname='surpac', indexName='surpac2.exe', begin=11, end=24)
+            self.py_win32.killProcess(pids=pids)
 
     # 生成surpac工作区widget
     def build_surpac_widget(self, cmd: str):
-        # self.killProcess([self.pid])
-        self.surpac_pid = self.startProcess(cmd)
-        hwnd = self.getTheMainWindow(pid=self.surpac_pid, spTitle='Surpac')
-        self.surpac_ports = self.getPortsFromPid(pid=self.surpac_pid)
-        self.surpac_widget = self.convertWndToWidget(hwnd=hwnd)
+        self.surpac_pid = self.py_win32.startProcess(cmd)
+        hwnd = self.py_win32.getTheMainWindow(pid=self.surpac_pid, spTitle='Surpac')
+        self.surpac_ports = self.py_win32.getPortsFromPid(pid=self.surpac_pid)
+        self.surpac_widget = self.py_win32.convertWndToWidget(hwnd=hwnd)
         return self.surpac_widget, self.surpac_ports, self.surpac_pid
+
+    # 获取surpac配置地址
+    def check_surpac_location_config(self):
+        surpac_location = self.config.get('master', 'surpac_location')
+        return os.path.isfile(surpac_location)
+
+    # 检查surpac配置是否正确
+    def check_surpac_location_config(self):
+        whittle_location = self.config.get('master', 'surpac_location')
+        return os.path.isfile(whittle_location)

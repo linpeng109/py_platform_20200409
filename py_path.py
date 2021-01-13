@@ -59,4 +59,4 @@ if __name__ == '__main__':
     path = Path()
     p1 = path.get_base_path()
     p2 = 'sclScript'
-    print(path.join(p1,p2))
+    print(path.join(p1, p2))

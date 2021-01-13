@@ -16,8 +16,6 @@ class HPro:
     secret_key = '12345678'
     encode = 'utf8'
 
-
-
     def __init__(self, config: ConfigFactory, logger: LoggerFactory):
         self.config = config
         self.logger = logger
@@ -28,6 +26,7 @@ class HPro:
         time.sleep(10)
         lines = io.stdout.readlines()
         return lines
+
 
 if __name__ == '__main__':
     # 设置配置文件和日志

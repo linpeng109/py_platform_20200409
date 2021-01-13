@@ -1,7 +1,7 @@
 import sys
 
-from PySide2.QtWidgets import QDialog, QApplication, QButtonGroup, QVBoxLayout, QRadioButton, QDialogButtonBox
 from PySide2.QtCore import Qt
+from PySide2.QtWidgets import QDialog, QApplication, QButtonGroup, QVBoxLayout, QRadioButton, QDialogButtonBox
 
 from py_config import ConfigFactory
 from py_logging import LoggerFactory
@@ -48,6 +48,7 @@ if __name__ == '__main__':
     logger = LoggerFactory(config=config).getLogger()
     short_cuts = ShortCuts(config=config, logger=logger)
     surpac_choice = short_cuts.getSurpacCmdList()
+
 
     # 定义回调函数
     def callback_func(id):

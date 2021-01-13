@@ -2,8 +2,8 @@ import multiprocessing
 import os
 import sys
 
-from PySide2.QtGui import QIcon, QPixmap
-from PySide2.QtWidgets import QApplication, QSplashScreen
+from PySide2.QtGui import QIcon
+from PySide2.QtWidgets import QApplication
 
 from py_config import ConfigFactory
 from py_logging import LoggerFactory

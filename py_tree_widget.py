@@ -3,8 +3,8 @@ from PySide2.QtCore import Signal
 from PySide2.QtGui import QFont
 from PySide2.QtWidgets import QTreeWidgetItem, QTreeWidget
 
-from py_choice_surpac_dialog import ChoiceSurpacDialog
 from py_choice_language_dialog import ChoiceLanguageDialog
+from py_choice_surpac_dialog import ChoiceSurpacDialog
 from py_path import Path
 from py_shortcuts import ShortCuts
 

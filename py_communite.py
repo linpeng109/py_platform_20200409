@@ -2,9 +2,9 @@ import importlib
 import threading
 from socket import socket, AF_INET, SOCK_STREAM
 
-from py_path import Path
 from py_config import ConfigFactory
 from py_logging import LoggerFactory
+from py_path import Path
 
 
 # Surpac通讯处理
@@ -76,7 +76,6 @@ class Tcl_script_worker(threading.Thread):
 
 class Surpac_init_worker(threading.Thread):
     def __init__(self, config, logger, port):
-
         super(Surpac_init_worker, self).__init__()
         self.config = config
         self.logger = logger

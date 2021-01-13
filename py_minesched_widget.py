@@ -1,8 +1,6 @@
 # encoding:utf-8
 import os
 
-from PySide2.QtCore import Slot
-
 # 生成minesched工作区widget
 from py_config import ConfigFactory
 from py_logging import LoggerFactory
@@ -25,8 +23,6 @@ class MineschedWidget():
         if self.config.get('minesched', 'minesched_kill_other_process'):
             pids = self.py_win32.getPidsFromPName(pname='MineSched', indexName='MineSched.exe', begin=13, end=22)
             self.py_win32.killProcess(pids=pids)
-
-
 
     # 生成minesched工作区widget
     def build_minesched_widget(self, cmd: str):

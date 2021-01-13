@@ -1,10 +1,11 @@
 import os
 
 import pythoncom
+from win32comext.shell import shell
+
 from py_config import ConfigFactory
 from py_logging import LoggerFactory
 from py_path import Path
-from win32comext.shell import shell
 
 
 class ShortCuts():
@@ -64,6 +65,7 @@ class ShortCuts():
                     result = result.replace('Program Files (x86)', 'Program Files')
                 whittle_cmd_list.append(result)
         return whittle_cmd_list
+
 
 if __name__ == '__main__':
     config = ConfigFactory(config_file='py_platform.ini').getConfig()

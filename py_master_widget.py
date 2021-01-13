@@ -1,5 +1,3 @@
-import os
-
 from PySide2.QtCore import Qt, Slot
 from PySide2.QtWidgets import QSplitter, QWidget, QVBoxLayout
 
@@ -7,7 +5,7 @@ from py_communite import Surpac_changelanguage_worker
 from py_communite import Tbc_script_worker, Tcl_script_worker, Py_script_worker, Fun_script_worker
 from py_config import ConfigFactory
 from py_logging import LoggerFactory
-from py_start_surpac_dialog import StartSurpacDialog
+from py_shortcuts import ShortCuts
 from py_surpac_widget import Surpac
 from py_tree_widget import TreeWidget
 
@@ -21,35 +19,20 @@ class MasterWidget(QSplitter):
         self.setOrientation(Qt.Horizontal)
         self.surpac_ports = None
         self.tree_widget = None
+        self.short_cuts = ShortCuts(config=config, logger=logger)
 
-        # surpac_widget配置
+        # 生成surpac_widget界面组件
         self.surpac = Surpac(config=config, logger=logger)
-
-        # 销毁所有surpac2名称的进程
-        if (config.get('master', 'surpac_kill_other_process')):
-            pids = self.surpac.getPidsFromPName('surpac2')
-            self.surpac.killProcess(pids)
-
+        self.surpac.startSurpacDialog.start_surpac_signal.connect(self.start_surpac_listener)
         # 读取配置文件，检查surpac是否已经正确配置
-        if (self.check_surpac_location_config()):
-            # 如果surpac配置正确，则根据配置文件获取surpac启动命令
+        self.surpac_cmd_list = []
+        if (self.surpac.check_surpac_location_config()):
             self.surpac_cmd_list = [self.config.get('master', 'surpac_location')]
             self.start_surpac_listener(self.surpac_cmd_list[0])
         else:
             # 如果配置不正确，则从系统快捷方式获取surpac命令行列表
-            self.surpac_cmd_list = self.surpac.getSurpacCmdList()
-            # 弹出对话框选择surpac版本
-            self.startSurpacDialog = StartSurpacDialog(logger=self.logger, config=self.config, title='请选择Surpac版本！',
-                                                       surpacs=self.surpac_cmd_list)
-            self.startSurpacDialog.show()
-
-            # 将启动surpac消息与surpac启动监听器关联
-            self.startSurpacDialog.start_surpac_signal.connect(self.start_surpac_listener)
-
-    # 获取surpac配置地址
-    def check_surpac_location_config(self):
-        surpac_location = self.config.get('master', 'surpac_location')
-        return os.path.isfile(surpac_location)
+            self.surpac.startSurpacDialog.setSurpacs(self.short_cuts.getSurpacCmdList())
+            self.surpac.startSurpacDialog.show()
 
     # 语言选择信号接收槽
     @Slot(str)
@@ -90,14 +73,14 @@ class MasterWidget(QSplitter):
         self.tree_widget.treeItem_tbc_clicked_signal.connect(self.treeItem_tbc_clicked_listener)
         self.tree_widget.treeItem_py_clicked_signal.connect(self.treeItem_py_clicked_listener)
 
-        # 在工作区中加入surpac和right组件
+        # 在工作区中加入surpac和menu组件
         self.addWidget(self.surpac_widget)
         self.addWidget(menu_widget)
 
     # Surpac版本选择信号接收槽
     @Slot(str)
     def change_surpac_listener(self, result):
-        self.surpac.killProcess([self.surpac_pid])
+        self.surpac.py_win32.killProcess([self.surpac_pid])
         self.surpac_widget, self.surpac_ports, self.surpac_pid = self.surpac.build_surpac_widget(result)
         self.replaceWidget(0, self.surpac_widget)
 

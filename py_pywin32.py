@@ -1,12 +1,11 @@
+import os
+import signal
 import subprocess
 import time
 
-import os
-import signal
 import win32con
 import win32gui
 import win32process
-
 from PySide2.QtGui import QWindow
 from PySide2.QtWidgets import QWidget
 
