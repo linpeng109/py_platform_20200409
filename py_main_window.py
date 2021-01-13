@@ -91,7 +91,6 @@ class MainWindow(QMainWindow):
             self.tab_widget.addTabItem(widget=self.minesched_widget, item_title=minesched_tag_title, index=3)
             # 指定tab不显示关闭按钮
             self.tab_widget.tabBar().setTabButton(3, QTabBar.RightSide, None)
-            self.tab_widget.update()
         else:
             self.logger.debug('minesched is not found')
 

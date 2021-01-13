@@ -27,14 +27,16 @@ class MineschedWidget():
             pids = self.getPidsFromPName('MineSched')
             self.killProcess(pids=pids)
         self.minesched_cmd_list = []
+        self.startMineSchedDialog = StartMineSchedDialog(config=config, logger=logger, title='请选择MineSched版本',
+                                                         minescheds=[])
         # 检查minesched路径是否配置正确
         if self.check_minesched_location_config():
             self.minesched_cmd_list = [self.config.get('minesched', 'minesched_location')]
         else:
             self.minesched_cmd_list = self.shortCut.getMineSchedCmdList()
-            self.startMineSchedDialog = StartMineSchedDialog(config=config, logger=logger, title='请选择MineSched版本',
-                                                             minescheds=self.minesched_cmd_list)
-            # self.startMineSchedDialog.minescheds = self.minesched_cmd_list
+            self.logger.debug(self.minesched_cmd_list)
+            self.startMineSchedDialog= StartMineSchedDialog(config=config, logger=logger, title='请选择MineSched版本',
+                                                          minescheds=self.minesched_cmd_list)
             self.startMineSchedDialog.show()
 
     # 启动执行文件返回进程pid
