@@ -12,7 +12,7 @@ class TabWidget(QTabWidget):
         # 链接关闭动作函数
         self.tabCloseRequested.connect(self.closeTabItem)
 
-    def addTabItem(self, widget: QWidget, item_title: str, index=-1):
+    def addTabItem(self, widget: QWidget, item_title: str) -> int:
         item_widget = QWidget()
         layout = QHBoxLayout()
         layout.setSpacing(50)
@@ -21,6 +21,7 @@ class TabWidget(QTabWidget):
         item_widget.setLayout(layout)
         self.addTab(item_widget, item_title)
         self.setCurrentWidget(item_widget)
+        return self.indexOf(item_widget)
 
     def closeTabItem(self, index: int):
         if self.count() > 1:
