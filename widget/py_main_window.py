@@ -1,15 +1,15 @@
 from PySide2.QtCore import QUrl, Slot
 from PySide2.QtWidgets import *
 
-from py_config import ConfigFactory
-from py_logging import LoggerFactory
-from py_master_widget import MasterWidget
-from py_minesched_widget import MineschedWidget
-from py_pywin32 import PY_Win32
-from py_shortcuts import ShortCuts
-from py_tab_widget import TabWidget
-from py_web_widget import WebEngineView
-from py_whittle_widget import WhittleWidget
+from util.py_config import ConfigFactory
+from util.py_logging import LoggerFactory
+from widget.py_master_widget import MasterWidget
+from widget.py_minesched_widget import MineschedWidget
+from util.py_pywin32 import PY_Win32
+from util.py_shortcuts import ShortCuts
+from widget.py_tab_widget import TabWidget
+from widget.py_web_widget import WebEngineView
+from widget.py_whittle_widget import WhittleWidget
 
 
 # 装配主窗口

@@ -2,8 +2,11 @@
 
 block_cipher = None
 
-added_files=[('sinomine_logo.ico','.'),
-             ('master_splash.png','.'),
+added_files=[('resource/sinomine_logo.ico','resource'),
+             ('resource/master_splash.png','resource'),
+             ('resource','resource'),
+             ('widget/*.py','widget'),
+             ('util/*.py','util'),
              ('sclScript/*.py','sclScript'),
              ('sclScript/*.tbc','sclScript'),
              ('sclScript/*.tcl','sclScript'),
@@ -39,4 +42,4 @@ exe = EXE(pyz,
           upx_exclude=[],
           runtime_tmpdir=None,
           console=False,
-          icon='sinomine_logo.ico')
+          icon='resource/sinomine_logo.ico')

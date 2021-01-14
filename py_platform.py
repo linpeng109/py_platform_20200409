@@ -5,10 +5,10 @@ import sys
 from PySide2.QtGui import QIcon
 from PySide2.QtWidgets import QApplication
 
-from py_config import ConfigFactory
-from py_logging import LoggerFactory
-from py_main_window import MainWindow
-from py_path import Path
+from util.py_config import ConfigFactory
+from util.py_logging import LoggerFactory
+from widget.py_main_window import MainWindow
+from util.py_path import Path
 
 if __name__ == '__main__':
 
@@ -22,7 +22,7 @@ if __name__ == '__main__':
 
     # 启动应用
     app = QApplication(sys.argv)
-    icon = QIcon(Path.get_resource_path('sinomine_logo.ico'))
+    icon = QIcon(Path.get_resource_path('resource/sinomine_logo.ico'))
 
     app.setWindowIcon(icon)
 

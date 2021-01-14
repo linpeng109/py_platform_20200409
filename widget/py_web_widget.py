@@ -3,8 +3,8 @@ import os
 
 from PySide2.QtWebEngineWidgets import QWebEngineSettings, QWebEngineView
 
-from py_config import ConfigFactory
-from py_logging import LoggerFactory
+from util.py_config import ConfigFactory
+from util.py_logging import LoggerFactory
 
 
 class WebEngineView(QWebEngineView):

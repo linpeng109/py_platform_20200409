@@ -1,7 +1,7 @@
 import importlib
 import threading
 
-from py_socket import SurpacSocketClient
+from util.py_socket import SurpacSocketClient
 
 
 class TbcRunThread(threading.Thread):

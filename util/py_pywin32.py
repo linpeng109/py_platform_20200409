@@ -9,8 +9,8 @@ import win32process
 from PySide2.QtGui import QWindow
 from PySide2.QtWidgets import QWidget
 
-from py_config import ConfigFactory
-from py_logging import LoggerFactory
+from util.py_config import ConfigFactory
+from util.py_logging import LoggerFactory
 
 
 class PY_Win32():

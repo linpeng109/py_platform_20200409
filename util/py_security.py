@@ -1,7 +1,7 @@
 import subprocess
 import time
 
-from py_config import ConfigFactory
+from util.py_config import ConfigFactory
 from py_logging import LoggerFactory
 
 
@@ -30,7 +30,7 @@ class HPro:
 
 if __name__ == '__main__':
     # 设置配置文件和日志
-    config = ConfigFactory(config_file='py_platform.ini').getConfig()
+    config = ConfigFactory(config_file='../py_platform.ini').getConfig()
     logger = LoggerFactory(config=config).getLogger()
 
     hpro = HPro(config=config, logger=logger)

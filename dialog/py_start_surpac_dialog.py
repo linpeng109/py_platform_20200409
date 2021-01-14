@@ -1,8 +1,8 @@
 from PySide2.QtCore import Qt, Signal
 from PySide2.QtWidgets import QDialog, QButtonGroup, QVBoxLayout, QRadioButton, QDialogButtonBox
 
-from py_config import ConfigFactory
-from py_logging import LoggerFactory
+from util.py_config import ConfigFactory
+from util.py_logging import LoggerFactory
 
 
 class StartSurpacDialog(QDialog):

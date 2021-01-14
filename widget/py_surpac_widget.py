@@ -2,11 +2,11 @@
 import os
 
 # 生成surpac工作区
-from py_config import ConfigFactory
-from py_logging import LoggerFactory
-from py_pywin32 import PY_Win32
-from py_shortcuts import ShortCuts
-from py_start_surpac_dialog import StartSurpacDialog
+from util.py_config import ConfigFactory
+from util.py_logging import LoggerFactory
+from util.py_pywin32 import PY_Win32
+from util.py_shortcuts import ShortCuts
+from dialog.py_start_surpac_dialog import StartSurpacDialog
 
 
 class Surpac():

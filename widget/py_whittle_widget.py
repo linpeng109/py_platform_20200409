@@ -2,10 +2,10 @@
 import os
 
 # 生成whillte工作区widget
-from py_config import ConfigFactory
-from py_logging import LoggerFactory
-from py_pywin32 import PY_Win32
-from py_start_whittle_dialog import StartWhittleDialog
+from util.py_config import ConfigFactory
+from util.py_logging import LoggerFactory
+from util.py_pywin32 import PY_Win32
+from dialog.py_start_whittle_dialog import StartWhittleDialog
 
 
 class WhittleWidget():

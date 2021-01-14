@@ -25,5 +25,5 @@ class ConfigFactory(ConfigParser):
 
 
 if __name__ == '__main__':
-    cfg = ConfigFactory(config_file='py_platform.ini').getConfig()
+    cfg = ConfigFactory(config_file='../py_platform.ini').getConfig()
     cfg.setConfig(section='surpac', option='surpac_location', value='c:/system5')

@@ -3,9 +3,9 @@ import os
 import pythoncom
 from win32comext.shell import shell
 
-from py_config import ConfigFactory
-from py_logging import LoggerFactory
-from py_path import Path
+from util.py_config import ConfigFactory
+from util.py_logging import LoggerFactory
+from util.py_path import Path
 
 
 class ShortCuts():
@@ -68,7 +68,7 @@ class ShortCuts():
 
 
 if __name__ == '__main__':
-    config = ConfigFactory(config_file='py_platform.ini').getConfig()
+    config = ConfigFactory(config_file='../py_platform.ini').getConfig()
     logger = LoggerFactory(config=config).getLogger()
     short_cuts = ShortCuts(config=config, logger=logger)
     # surpacList = short_cuts.getSurpacCmdList()

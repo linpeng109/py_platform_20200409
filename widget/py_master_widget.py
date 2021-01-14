@@ -1,13 +1,13 @@
 from PySide2.QtCore import Qt, Slot
 from PySide2.QtWidgets import QSplitter, QWidget, QVBoxLayout
 
-from py_communite import Surpac_changelanguage_worker
-from py_communite import Tbc_script_worker, Tcl_script_worker, Py_script_worker, Fun_script_worker
-from py_config import ConfigFactory
-from py_logging import LoggerFactory
-from py_shortcuts import ShortCuts
-from py_surpac_widget import Surpac
-from py_tree_widget import TreeWidget
+from util.py_communite import Surpac_changelanguage_worker
+from util.py_communite import Tbc_script_worker, Tcl_script_worker, Py_script_worker, Fun_script_worker
+from util.py_config import ConfigFactory
+from util.py_logging import LoggerFactory
+from util.py_shortcuts import ShortCuts
+from widget.py_surpac_widget import Surpac
+from widget.py_tree_widget import TreeWidget
 
 
 class MasterWidget(QSplitter):

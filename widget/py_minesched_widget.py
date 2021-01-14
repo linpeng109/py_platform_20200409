@@ -2,11 +2,11 @@
 import os
 
 # 生成minesched工作区widget
-from py_config import ConfigFactory
-from py_logging import LoggerFactory
-from py_pywin32 import PY_Win32
-from py_shortcuts import ShortCuts
-from py_start_minesched_dialog import StartMineSchedDialog
+from util.py_config import ConfigFactory
+from util.py_logging import LoggerFactory
+from util.py_pywin32 import PY_Win32
+from util.py_shortcuts import ShortCuts
+from dialog.py_start_minesched_dialog import StartMineSchedDialog
 
 
 class MineschedWidget():
@@ -39,7 +39,7 @@ class MineschedWidget():
 
 if __name__ == '__main__':
     # 设置配置文件和日志
-    config = ConfigFactory(config_file='py_platform.ini').getConfig()
+    config = ConfigFactory(config_file='../py_platform.ini').getConfig()
     logger = LoggerFactory(config=config).getLogger()
 
     minesched = MineschedWidget(config=config, logger=logger)
