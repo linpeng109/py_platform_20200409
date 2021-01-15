@@ -1,8 +1,8 @@
 from PySide2.QtCore import Qt, Slot
 from PySide2.QtWidgets import QSplitter, QWidget, QVBoxLayout
 
-from util.py_communite import Surpac_changelanguage_worker
-from util.py_communite import Tbc_script_worker, Tcl_script_worker, Py_script_worker, Fun_script_worker
+from util.py_communite import SurpacChangeLanguageWorker
+from util.py_communite import TbcScriptWorker, TclScriptWorker, PyScriptWorker, FunScriptWorker
 from util.py_config import ConfigFactory
 from util.py_logging import LoggerFactory
 from util.py_shortcuts import ShortCuts
@@ -31,7 +31,7 @@ class MasterWidget(QSplitter):
             self.start_surpac_listener(self.surpac_cmd_list[0])
         else:
             # 如果配置不正确，则从系统快捷方式获取surpac命令行列表
-            self.surpac.startSurpacDialog.setSurpacs(self.short_cuts.getSurpacCmdList())
+            self.surpac.startSurpacDialog.set_surpacs(self.short_cuts.get_surpac_cmd_list())
             self.surpac.startSurpacDialog.show()
 
     # 语言选择信号接收槽
@@ -40,12 +40,12 @@ class MasterWidget(QSplitter):
         self.tree_widget.treeWidget_load(result)
         # 命令与执行脚本对应(待优化)
         if ('_cn' in result):
-            client = Surpac_changelanguage_worker(logger=self.logger, config=self.config, port=self.surpac_ports[0],
-                                                  msg='test_language_cn.tcl')
+            client = SurpacChangeLanguageWorker(logger=self.logger, config=self.config, port=self.surpac_ports[0],
+                                                msg='test_language_cn.tcl')
             client.start()
         elif ('_en' in result):
-            client = Surpac_changelanguage_worker(logger=self.logger, config=self.config, port=self.surpac_ports[0],
-                                                  msg='test_language_en.tcl')
+            client = SurpacChangeLanguageWorker(logger=self.logger, config=self.config, port=self.surpac_ports[0],
+                                                msg='test_language_en.tcl')
             client.start()
 
     # Surpac启动信号接收槽
@@ -87,23 +87,23 @@ class MasterWidget(QSplitter):
     # 运行func类脚本
     @Slot(str)
     def treeItem_func_clicked_listener(self, result):
-        client = Fun_script_worker(logger=self.logger, config=self.config, port=self.surpac_ports[0], msg=result)
+        client = FunScriptWorker(logger=self.logger, config=self.config, port=self.surpac_ports[0], msg=result)
         client.start()
 
     # 运行tcl类脚本
     @Slot(str)
     def treeItem_tcl_clicked_listener(self, result):
-        client = Tcl_script_worker(config=self.config, logger=self.logger, port=self.surpac_ports[0], msg=result)
+        client = TclScriptWorker(config=self.config, logger=self.logger, port=self.surpac_ports[0], msg=result)
         client.start()
 
     # 运行tbc类脚本
     @Slot(str)
     def treeItem_tbc_clicked_listener(self, result):
-        client = Tbc_script_worker(logger=self.logger, config=self.config, port=self.surpac_ports[0], msg=result)
+        client = TbcScriptWorker(logger=self.logger, config=self.config, port=self.surpac_ports[0], msg=result)
         client.start()
 
     # 运行py类脚本
     @Slot(str)
     def treeItem_py_clicked_listener(self, result):
-        client = Py_script_worker(logger=self.logger, config=self.config, port=self.surpac_ports[0], msg=result)
+        client = PyScriptWorker(logger=self.logger, config=self.config, port=self.surpac_ports[0], msg=result)
         client.start()

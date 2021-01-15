@@ -6,24 +6,20 @@ class ConfigFactory(ConfigParser):
     def __init__(self, config_file: str):
         super(ConfigFactory, self).__init__()
         self.config = config_file
+        self._interpolation = None
 
     # 在配置文件中使用变量调用
-    def optionxform(self, optionstr):
-        return optionstr
+    def optionxform(self, option_str):
+        return option_str
 
-    def setConfig(self, section, option, value):
+    def set_config(self, section, option, value):
         self.read(self.config, 'gbk')
         self.set(section=section, option=option, value=value)
         with open(self.config, 'w') as config_file:
             self.write(config_file)
 
-    def getConfig(self):
+    def get_config(self):
         # 在配置文件中使用变量调用
         self._interpolation = configparser.ExtendedInterpolation()
         self.read(filenames=self.config, encoding='gbk')
         return self
-
-
-if __name__ == '__main__':
-    cfg = ConfigFactory(config_file='../py_platform.ini').getConfig()
-    cfg.setConfig(section='surpac', option='surpac_location', value='c:/system5')

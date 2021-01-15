@@ -22,19 +22,21 @@ class StartSurpacDialog(QDialog):
         self.start_surpac_button_group = QButtonGroup()
         self.start_surpac_button_group.setExclusive(True)
         self.buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel, Qt.Horizontal, self)
+        self.surpacs = []
+        self.surpac_id = 0
 
     # 设置Surpac不同版本列表
-    def setSurpacs(self, surpacs: list):
+    def set_surpacs(self, surpacs: list):
         self.surpacs = surpacs
-        for id, surpac in enumerate(surpacs):
+        for _id, surpac in enumerate(surpacs):
             surpac_item = QRadioButton(surpac)
             self.start_surpac_button_group.addButton(surpac_item)
-            self.start_surpac_button_group.setId(surpac_item, id)
-            if id == 0:
+            self.start_surpac_button_group.setId(surpac_item, _id)
+            if _id == 0:
                 surpac_item.setChecked(True)
                 self.surpac_id = 0
             self.layout.addWidget(surpac_item)
-        self.start_surpac_button_group.buttonClicked.connect(self.startSurpacChange)
+        self.start_surpac_button_group.buttonClicked.connect(self.start_surpac_change)
         self.buttons.accepted.connect(self.accept)
         self.buttons.rejected.connect(self.reject)
         self.layout.addWidget(self.buttons)
@@ -43,9 +45,9 @@ class StartSurpacDialog(QDialog):
     def accept(self):
         # 先关闭对话框，然后发送消息
         super(StartSurpacDialog, self).accept()
-        self.config.setConfig('master', 'surpac_location', self.surpacs[self.surpac_id])
+        self.config.set_config('master', 'surpac_location', self.surpacs[self.surpac_id])
         # 发送surpac启动消息
         self.start_surpac_signal.emit(self.surpacs[self.surpac_id])
 
-    def startSurpacChange(self):
+    def start_surpac_change(self):
         self.surpac_id = self.start_surpac_button_group.checkedId()

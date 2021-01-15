@@ -8,14 +8,15 @@ from util.py_logging import LoggerFactory
 from util.py_path import Path
 
 
-class ShortCuts():
+class ShortCuts:
     PROGRAM_DATA_PATH = r'C:\ProgramData\Microsoft\Windows\Start Menu\Programs\GEOVIA'
 
-    def __init__(self, config, logger):
+    def __init__(self, config: ConfigFactory, logger: LoggerFactory):
         self.config = config
         self.logger = logger
 
-    def resolve_shortcut(self, filename):
+    @staticmethod
+    def resolve_shortcut(filename):
         shell_link = pythoncom.CoCreateInstance(
             shell.CLSID_ShellLink,
             None,
@@ -30,36 +31,36 @@ class ShortCuts():
         linked_to_file = shell_link.GetPath(shell.SLGP_UNCPRIORITY)[0]
         return linked_to_file
 
-    def getSurpacCmdList(self):
+    def get_surpac_cmd_list(self):
         surpac_cmd_list = []
         lnk_list = os.listdir(self.PROGRAM_DATA_PATH)
         for lnk in lnk_list:
             lnk_file = os.path.join(self.PROGRAM_DATA_PATH, lnk)
-            if Path.filenameIsContains(lnk_file, 'surpac'):
+            if Path.filename_is_contains_appname(appname='surpac', full_path_filename=lnk_file):
                 result = self.resolve_shortcut(lnk_file)
                 if '_x64' in result:
                     result = result.replace('Program Files (x86)', 'Program Files')
                 surpac_cmd_list.append(result)
         return surpac_cmd_list
 
-    def getMineSchedCmdList(self):
+    def get_minesched_cmd_list(self):
         minesched_cmd_list = []
         lnk_list = os.listdir(self.PROGRAM_DATA_PATH)
         for lnk in lnk_list:
             lnk_file = os.path.join(self.PROGRAM_DATA_PATH, lnk)
-            if Path.filenameIsContains(lnk_file, 'minsched'):
+            if Path.filename_is_contains_appname(appname='minsched', full_path_filename=lnk_file):
                 result = self.resolve_shortcut(lnk_file)
                 if '_x64' in result:
                     result = result.replace('Program Files (x86)', 'Program Files')
                 minesched_cmd_list.append(result)
         return minesched_cmd_list
 
-    def getWhittleCmdList(self):
+    def get_whittle_cmd_list(self):
         whittle_cmd_list = []
         lnk_list = os.listdir(self.PROGRAM_DATA_PATH)
         for lnk in lnk_list:
             lnk_file = os.path.join(self.PROGRAM_DATA_PATH, lnk)
-            if Path.filenameIsContains(lnk_file, 'whittle'):
+            if Path.filename_is_contains_appname(appname='whittle', full_path_filename=lnk_file):
                 result = self.resolve_shortcut(lnk_file)
                 if '_x64' in result:
                     result = result.replace('Program Files (x86)', 'Program Files')
@@ -68,16 +69,9 @@ class ShortCuts():
 
 
 if __name__ == '__main__':
-    config = ConfigFactory(config_file='../py_platform.ini').getConfig()
-    logger = LoggerFactory(config=config).getLogger()
-    short_cuts = ShortCuts(config=config, logger=logger)
-    # surpacList = short_cuts.getSurpacCmdList()
-    # logger.debug(surpacList)
-    # mineschedList = short_cuts.getMineSchedCmdList()
-    # logger.debug(mineschedList)
-    whittleList = short_cuts.getWhittleCmdList()
-    logger.debug(whittleList)
-    # mineschedList = short_cuts.getMineSchedCmdList()
-    # logger.debug(mineschedList)
-    # whittleList = short_cuts.getWhittleCmdList()
-    # logger.debug(whittleList)
+    config = ConfigFactory(config_file='../py_platform.ini').get_config()
+    logger = LoggerFactory(config_factory=config).get_logger()
+    short_cat = ShortCuts(config=config, logger=logger)
+    logger.debug(short_cat.get_surpac_cmd_list())
+    logger.debug(short_cat.get_whittle_cmd_list())
+    logger.debug(short_cat.get_minesched_cmd_list())

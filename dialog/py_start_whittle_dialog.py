@@ -22,19 +22,21 @@ class StartWhittleDialog(QDialog):
         self.start_whittle_button_group = QButtonGroup()
         self.start_whittle_button_group.setExclusive(True)
         self.buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel, Qt.Horizontal, self)
+        self.whittles = []
+        self.whittle_id = 0
 
     # 设置Whittle不同版本列表
-    def setWhittles(self, whittles: list):
+    def set_whittles(self, whittles: list):
         self.whittles = whittles
-        for id, whittle in enumerate(self.whittles):
+        for _id, whittle in enumerate(self.whittles):
             whittle_item = QRadioButton(whittle)
             self.start_whittle_button_group.addButton(whittle_item)
-            self.start_whittle_button_group.setId(whittle_item, id)
-            if id == 0:
+            self.start_whittle_button_group.setId(whittle_item, _id)
+            if _id == 0:
                 whittle_item.setChecked(True)
                 self.whittle_id = 0
             self.layout.addWidget(whittle_item)
-        self.start_whittle_button_group.buttonClicked.connect(self.startWhittleChange)
+        self.start_whittle_button_group.buttonClicked.connect(self.start_whittle_change)
         self.buttons.accepted.connect(self.accept)
         self.buttons.rejected.connect(self.reject)
         self.layout.addWidget(self.buttons)
@@ -43,9 +45,9 @@ class StartWhittleDialog(QDialog):
     def accept(self):
         # 先关闭对话框，然后发送消息
         super(StartWhittleDialog, self).accept()
-        self.config.setConfig('whittle', 'whittle_location', self.whittles[self.whittle_id])
+        self.config.set_config('whittle', 'whittle_location', self.whittles[self.whittle_id])
         # 发送surpac启动消息
         self.start_whittle_signal.emit(self.whittles[self.whittle_id])
 
-    def startWhittleChange(self):
+    def start_whittle_change(self):
         self.whittle_id = self.start_whittle_button_group.checkedId()

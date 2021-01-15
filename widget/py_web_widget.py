@@ -50,5 +50,5 @@ class WebEngineView(QWebEngineView):
     # 重载QWebEnginView的createwindow()函数
     def createWindow(self, QWebEnginePage_WebWindowType):
         new_webview = WebEngineView(self.tabWidget, config=self.config, logger=self.logger)
-        self.tabWidget.addTabItem(new_webview, '新页面')
+        self.tabWidget.add_tab_item(new_webview, '新页面')
         return new_webview

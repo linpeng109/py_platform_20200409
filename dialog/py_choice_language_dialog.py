@@ -21,16 +21,16 @@ class ChoiceLanguageDialog(QDialog):
         self.choice_language_button_group = QButtonGroup()
         self.choice_language_button_group.setExclusive(True)
         layout = QVBoxLayout()
-        for id, language in enumerate(languages):
+        for language_id, language in enumerate(languages):
             # 显示语言提示
             language_item = QRadioButton(language.split(':')[0])
             self.choice_language_button_group.addButton(language_item)
-            self.choice_language_button_group.setId(language_item, id)
-            if id == 0:
+            self.choice_language_button_group.setId(language_item, language_id)
+            if language_id == 0:
                 language_item.setChecked(True)
                 self.language_id = 0
             layout.addWidget(language_item)
-        self.choice_language_button_group.buttonClicked.connect(self.languageChange)
+        self.choice_language_button_group.buttonClicked.connect(self.language_change)
         self.buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel, Qt.Horizontal, self)
         self.buttons.accepted.connect(self.accept)
         self.buttons.rejected.connect(self.reject)
@@ -43,7 +43,7 @@ class ChoiceLanguageDialog(QDialog):
         # 发送语言文件
         language = self.languages[self.language_id].split(':')[1]
         self.choices_language_dialog_signal.emit(language)
-        self.config.setConfig('master', 'surpac_language_cfg', language)
+        self.config.set_config('master', 'surpac_language_cfg', language)
 
-    def languageChange(self):
+    def language_change(self):
         self.language_id = self.choice_language_button_group.checkedId()

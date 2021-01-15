@@ -1,12 +1,12 @@
 # encoding:utf-8
 import os
 
+from dialog.py_start_surpac_dialog import StartSurpacDialog
 # 生成surpac工作区
 from util.py_config import ConfigFactory
 from util.py_logging import LoggerFactory
 from util.py_pywin32 import PY_Win32
 from util.py_shortcuts import ShortCuts
-from dialog.py_start_surpac_dialog import StartSurpacDialog
 
 
 class Surpac():
@@ -37,8 +37,3 @@ class Surpac():
     def check_surpac_location_config(self):
         surpac_location = self.config.get('master', 'surpac_location')
         return os.path.isfile(surpac_location)
-
-    # 检查surpac配置是否正确
-    def check_surpac_location_config(self):
-        whittle_location = self.config.get('master', 'surpac_location')
-        return os.path.isfile(whittle_location)

@@ -22,15 +22,15 @@ class ChoiceSurpacDialog(QDialog):
         self.choice_surpac_button_group = QButtonGroup()
         self.choice_surpac_button_group.setExclusive(True)
         layout = QVBoxLayout()
-        for id, choice in enumerate(surpacs):
+        for surpac_id, choice in enumerate(surpacs):
             surpac_item = QRadioButton(choice)
             self.choice_surpac_button_group.addButton(surpac_item)
-            self.choice_surpac_button_group.setId(surpac_item, id)
-            if id == 0:
+            self.choice_surpac_button_group.setId(surpac_item, surpac_id)
+            if surpac_id == 0:
                 surpac_item.setChecked(True)
                 self.surpac_id = 0
             layout.addWidget(surpac_item)
-        self.choice_surpac_button_group.buttonClicked.connect(self.choiceSurpacChange)
+        self.choice_surpac_button_group.buttonClicked.connect(self.choice_surpac_change)
         self.buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel, Qt.Horizontal, self)
         self.buttons.accepted.connect(self.accept)
         self.buttons.rejected.connect(self.reject)
@@ -40,11 +40,11 @@ class ChoiceSurpacDialog(QDialog):
     def accept(self):
         # 先关闭对话框，然后发送消息
         super(ChoiceSurpacDialog, self).accept()
-        if (self.config.get('master', 'surpac_location') == self.surpacs[self.surpac_id]):
+        if self.config.get('master', 'surpac_location') == self.surpacs[self.surpac_id]:
             pass
         else:
             self.choices_surpac_signal.emit(self.surpacs[self.surpac_id])
-            self.config.setConfig('master', 'surpac_location', self.surpacs[self.surpac_id])
+            self.config.set_config('master', 'surpac_location', self.surpacs[self.surpac_id])
 
-    def choiceSurpacChange(self):
+    def choice_surpac_change(self):
         self.surpac_id = self.choice_surpac_button_group.checkedId()

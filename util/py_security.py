@@ -1,27 +1,35 @@
+import os
 import subprocess
 import time
 
 from util.py_config import ConfigFactory
-from py_logging import LoggerFactory
+from util.py_logging import LoggerFactory
+from util.py_path import Path
 
 
-class HPro:
-    mail_host = 'smtp - mail.outlook.com'
-    mail_port = 587
-    mail_ssl_port = 465
-    mail_user = 'goldenhello1900 @ outlook.com'
-    mail_password = '1qaz2wsx3edc'
-    sender = 'goldenhello1900 @ outlook.com'
-    receivers = 'goldenhello1900 @ outlook.com'
-    secret_key = '12345678'
-    encode = 'utf8'
-
-    def __init__(self, config: ConfigFactory, logger: LoggerFactory):
+class Security:
+    def __int__(self, config: ConfigFactory, logger: LoggerFactory):
         self.config = config
         self.logger = logger
+        self.mail_host = 'smtp - mail.outlook.com'
+        self.mail_port = 587
+        self.mail_ssl_port = 465
+        self.mail_user = 'goldenhello1900 @ outlook.com'
+        self.mail_password = '1qaz2wsx3edc'
+        self.sender = 'goldenhello1900 @ outlook.com'
+        self.receivers = 'goldenhello1900 @ outlook.com'
+        self.secret_key = '12345678'
+        self.encode = 'utf8'
 
-    def readHPro(self):
-        io = subprocess.Popen("d:/HPro.exe", shell=True, stdout=subprocess.PIPE,
+    # @staticmethod
+    def check_hpro_path(self) -> bool:
+        hpro_file = Path.get_resource_path('/hpro/HPro.exe')
+        return os.path.isfile(hpro_file)
+
+    # @staticmethod
+    def read_hpro(self):
+        hpro_client_path = Path.get_resource_path("/hpro/HPro.exe")
+        io = subprocess.Popen(hpro_client_path, shell=True, stdout=subprocess.PIPE,
                               stderr=subprocess.PIPE, stdin=subprocess.PIPE, close_fds=True)
         time.sleep(10)
         lines = io.stdout.readlines()
@@ -30,9 +38,9 @@ class HPro:
 
 if __name__ == '__main__':
     # 设置配置文件和日志
-    config = ConfigFactory(config_file='../py_platform.ini').getConfig()
-    logger = LoggerFactory(config=config).getLogger()
+    config = ConfigFactory(config_file='../py_platform.ini').get_config()
+    logger = LoggerFactory(config_factory=config).get_logger()
 
-    hpro = HPro(config=config, logger=logger)
-    print(hpro.readHPro())
+    hpro = Security()
+    print(hpro.read_hpro())
     # logger.debug(hpro.readHPro()[0].decode('utf-8'))

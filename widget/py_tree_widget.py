@@ -24,7 +24,7 @@ class TreeWidget(QTreeWidget):
         surpac_scl_cfg = self.config.get('master', 'surpac_language_cfg')
         self.treeWidget_load(surpac_scl_cfg=surpac_scl_cfg)
         self.shortcut = ShortCuts(config=self.config, logger=self.logger)
-        surpacs = self.shortcut.getSurpacCmdList()
+        surpacs = self.shortcut.get_surpac_cmd_list()
         self.choice_surpac_dialog = ChoiceSurpacDialog(config=self.config, logger=self.logger, title='请选择Surpac版本',
                                                        surpacs=surpacs)
         surpac_languages = str(self.config.get('master', 'surpac_languages')).split(';')

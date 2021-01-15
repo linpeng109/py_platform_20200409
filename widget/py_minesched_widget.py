@@ -1,12 +1,12 @@
 # encoding:utf-8
 import os
 
+from dialog.py_start_minesched_dialog import StartMineSchedDialog
 # 生成minesched工作区widget
 from util.py_config import ConfigFactory
 from util.py_logging import LoggerFactory
 from util.py_pywin32 import PY_Win32
 from util.py_shortcuts import ShortCuts
-from dialog.py_start_minesched_dialog import StartMineSchedDialog
 
 
 class MineschedWidget():
@@ -39,17 +39,10 @@ class MineschedWidget():
 
 if __name__ == '__main__':
     # 设置配置文件和日志
-    config = ConfigFactory(config_file='../py_platform.ini').getConfig()
-    logger = LoggerFactory(config=config).getLogger()
+    config = ConfigFactory(config_file='../py_platform.ini').get_config()
+    logger = LoggerFactory(config_factory=config).get_logger()
 
     minesched = MineschedWidget(config=config, logger=logger)
     pids = minesched.getPidsFromPName('MineSched')
     logger.debug(pids)
     minesched.killProcess(pids=pids)
-    # minesched_pid = minesched.startProcess(
-    #     cmd='C:/Program Files/Dassault Systemes/GEOVIA MineSched/9.2.0/MineSched.exe')
-    # logger.debug(minesched_pid)
-    # minesched_hwnd = minesched.getTheMainWindow(pid=minesched_pid, spTitle='MineSched')
-    # logger.debug(minesched_hwnd)
-    # minesched_widget = minesched.convertWndToWidget(hwnd=minesched_hwnd)
-    # logger.debug(minesched_widget.__class__)
