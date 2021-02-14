@@ -31,10 +31,7 @@ class MainWindow(QMainWindow):
         self.whittle_pid = 0
 
         # tab_widget界面组件
-        self.tab_widget = TabWidget()
-        font = self.tab_widget.tabBar().font()
-        font.setPointSize(18)
-        self.tab_widget.tabBar().setFont(font)
+        self.tab_widget = TabWidget(config=config, logger=logger)
 
         # 构建web_widget界面组件
         try:

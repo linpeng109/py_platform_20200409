@@ -382,4 +382,4 @@ root:
         child131:
           text: '关于'
           descript: '关于'
-          scl: 'p90000_about.py'
+          scl: 'm90000_about.tcl'

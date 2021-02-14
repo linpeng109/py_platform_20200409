@@ -396,4 +396,5 @@ root:
     m90000:
       text: '关于'
       descript: '关于'
-      scl: 'SMGEOTBC:m90000_about.tcl'
+      scl: 'm90000_about.tcl'
+#      scl: 'SMGEOTBC:m90000_about.tcl'
