@@ -9,7 +9,8 @@ from util.py_path import Path
 
 
 class ShortCuts:
-    PROGRAM_DATA_PATH = r'C:\ProgramData\Microsoft\Windows\Start Menu\Programs\GEOVIA'
+    # PROGRAM_DATA_PATH = r'C:\ProgramData\Microsoft\Windows\Start Menu\Programs\GEOVIA'
+    PROGRAM_DATA_PATH = r'C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Gemcom Software'
 
     def __init__(self, config: ConfigFactory, logger: LoggerFactory):
         self.config = config
