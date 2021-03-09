@@ -10,11 +10,12 @@ from util.py_path import Path
 
 class ShortCuts:
     # PROGRAM_DATA_PATH = r'C:\ProgramData\Microsoft\Windows\Start Menu\Programs\GEOVIA'
-    PROGRAM_DATA_PATH = r'C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Gemcom Software'
+    # PROGRAM_DATA_PATH = r'C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Gemcom Software'
 
     def __init__(self, config: ConfigFactory, logger: LoggerFactory):
         self.config = config
         self.logger = logger
+        self.program_data_path = config.get('master', 'program_data_path')
 
     @staticmethod
     def resolve_shortcut(filename):
@@ -34,9 +35,9 @@ class ShortCuts:
 
     def get_surpac_cmd_list(self):
         surpac_cmd_list = []
-        lnk_list = os.listdir(self.PROGRAM_DATA_PATH)
+        lnk_list = os.listdir(self.program_data_path)
         for lnk in lnk_list:
-            lnk_file = os.path.join(self.PROGRAM_DATA_PATH, lnk)
+            lnk_file = os.path.join(self.program_data_path, lnk)
             if Path.filename_is_contains_appname(appname='surpac', full_path_filename=lnk_file):
                 result = self.resolve_shortcut(lnk_file)
                 if '_x64' in result:
@@ -46,9 +47,9 @@ class ShortCuts:
 
     def get_minesched_cmd_list(self):
         minesched_cmd_list = []
-        lnk_list = os.listdir(self.PROGRAM_DATA_PATH)
+        lnk_list = os.listdir(self.program_data_path)
         for lnk in lnk_list:
-            lnk_file = os.path.join(self.PROGRAM_DATA_PATH, lnk)
+            lnk_file = os.path.join(self.program_data_path, lnk)
             if Path.filename_is_contains_appname(appname='minsched', full_path_filename=lnk_file):
                 result = self.resolve_shortcut(lnk_file)
                 if '_x64' in result:
@@ -58,9 +59,9 @@ class ShortCuts:
 
     def get_whittle_cmd_list(self):
         whittle_cmd_list = []
-        lnk_list = os.listdir(self.PROGRAM_DATA_PATH)
+        lnk_list = os.listdir(self.program_data_path)
         for lnk in lnk_list:
-            lnk_file = os.path.join(self.PROGRAM_DATA_PATH, lnk)
+            lnk_file = os.path.join(self.program_data_path, lnk)
             if Path.filename_is_contains_appname(appname='whittle', full_path_filename=lnk_file):
                 result = self.resolve_shortcut(lnk_file)
                 if '_x64' in result:
